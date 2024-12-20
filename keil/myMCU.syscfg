@@ -52,7 +52,6 @@ const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 I2C1.$name                     = "I2C_0";
 I2C1.basicEnableController     = true;
 I2C1.advControllerTXFIFOTRIG   = "BYTES_1";
-I2C1.intController             = ["NACK"];
 I2C1.interruptPriority         = "3";
 I2C1.peripheral.$assign        = "I2C1";
 I2C1.peripheral.sdaPin.$assign = "PB3";

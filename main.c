@@ -4,6 +4,11 @@
 #include "DataProcess.h"
 #include "FaultProtect.h"
 
+#define SW_VER_ADDRESS (0x00010000)
+uint32_t SW_VER = 0x24122001;
+
+uint32_t gData= 0x0;
+uint32_t *p = 0;
 
 int main(void)
 {
@@ -14,18 +19,24 @@ int main(void)
     DL_DMA_setDestAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t) &RecBuffer[0]);
     DL_DMA_setTransferSize(DMA, DMA_CH0_CHAN_ID, 8);//when uart DMA is enabled, single mode must be chosen and the length is RX buffer length
     DL_DMA_enableChannel(DMA, DMA_CH0_CHAN_ID);
+	
 	  /* Enable NVIC*/
 	  NVIC_EnableIRQ(TIMER_INST_INT_IRQN);
 	  NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
 	  NVIC_EnableIRQ(I2C_0_INST_INT_IRQN);
-	
-	  BQ769x2_Init();
+	  /*My sw version*/
+    DL_FlashCTL_unprotectSector(FLASHCTL, SW_VER_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
+	  DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, SW_VER_ADDRESS, DL_FLASHCTL_COMMAND_SIZE_SECTOR);
+	  DL_FlashCTL_unprotectSector(FLASHCTL, SW_VER_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
+    DL_FlashCTL_programMemory32WithECCGenerated(FLASHCTL, SW_VER_ADDRESS, &SW_VER);
+	  
+	  BQ769x2_Init(&packInfo);
 	
     delayMS(1);
 	  CommandSubcommands(FET_ENABLE); // Enable the CHG and DSG FETs
 	  delayMS(1);
 	  CommandSubcommands(SLEEP_DISABLE); // Sleep mode is enabled by default. For this example, Sleep is disabled to 
-									   // demonstrate full-speed measurements in Normal mode.
+									                     // demonstrate full-speed measurements in Normal mode.
     PC_protocol_init();
     
     FaultProtect_init();
@@ -38,6 +49,7 @@ int main(void)
 			BQDataGet();
 			
 			FaultDetect();
+			
 			
 			if(UART_Fault){
 				  UART_FaultReset();//dont put this in interrupt
@@ -62,6 +74,15 @@ void TIMER_INST_IRQHandler(void)
         case DL_TIMER_IIDX_ZERO:
 				     if(PcPointBuffer[test_cnter] == 65535) PcPointBuffer[test_cnter] = 0;
 				     PcPointBuffer[test_cnter]++;
+//				     p = (void *)MAIN_BASE_ADDRESS;
+//				     gData = *p;
+//				     if(gData == 0xFFFFFFFF) gData = 0;
+//				     gData++;
+//				     DL_FlashCTL_unprotectSector(FLASHCTL, MAIN_BASE_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
+//             DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, MAIN_BASE_ADDRESS, DL_FLASHCTL_COMMAND_SIZE_SECTOR);
+//             DL_FlashCTL_unprotectSector(FLASHCTL, MAIN_BASE_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
+//             DL_FlashCTL_programMemory32WithECCGenerated(FLASHCTL, (MAIN_BASE_ADDRESS), &gData);
+//				     DL_FlashCTL_waitForCmdDone(FLASHCTL);
              break;
         default:
              break;

@@ -203,7 +203,7 @@ void BQ769x2_SetRegister(uint16_t reg_addr, uint32_t reg_data, uint8_t datalen)
     }
 }
 //************************************BQ769X2 Functions*********************************
-void BQ769x2_Init()
+void BQ769x2_Init(BatPackBasicInfo* packInfo)
 {
 //    uint16_t u16TempValue;
 //    uint8_t u8Count;
@@ -239,29 +239,12 @@ void BQ769x2_Init()
     // Set DFETOFF pin to control BOTH CHG and DSG FET - 0x92FB = 0x42 (set to 0x00 to disable)
     BQ769x2_SetRegister(DFETOFFPinConfig, 0x42, 1);
 
-    // Set up ALERT Pin - 0x92FC = 0x2A
-    // This configures the ALERT pin to drive high (REG1 voltage) when enabled.
-    // The ALERT pin can be used as an interrupt to the MCU when a protection has triggered or new measurements are available
-    BQ769x2_SetRegister(ALERTPinConfig, 0x07, 1);
-
-    // Set TS1 to measure Cell Temperature - 0x92FD = 0x07
-    BQ769x2_SetRegister(CFETOFFPinConfig, 0x07, 1);
-
-    // Set TS3 to measure FET Temperature - 0x92FF = 0x0F
-    BQ769x2_SetRegister(TS3Config, 0x07, 1);
-
-    // Set HDQ to measure Cell Temperature - 0x9300 = 0x07
-    BQ769x2_SetRegister(HDQPinConfig, 0x07,1);  // No thermistor installed on EVM HDQ pin, so set to 0x00
+    // Set 4 Pins to measure Cell Temperature
+    Temperature_Pin_Initialize(packInfo->thermistorPinIndex,THERMISTOR_NUM);		
 
     // 'VCell Mode' - Enable 16 cells - 0x9304 = 0x0000; Writing 0x0000 sets the default of 16 cells
-    // Only for openwire detection and  protection
-//    u16TempValue = 0;
-//    for (u8Count = 0; u8Count < (pGaugeApp->ui8NrOfCell - 1); u8Count++) {
-//        u16TempValue += (0x1 << u8Count);
-//    }
-//    u16TempValue += 0x8000;
-//    BQ769x2_SetRegister(VCellMode, u16TempValue, 2);
-    BQ769x2_SetRegister(VCellMode, 0xC03F, 2);
+		VolMode_Initialize(packInfo->cellIndex,CELL_NUM);
+		
     // Enable protections in 'Enabled Protections A' 0x9261 = 0xBC
     // Enables SCD (short-circuit), OCD1 (over-current in discharge), OCC (over-current in charge),
     // COV (over-voltage), CUV (under-voltage)
@@ -286,19 +269,11 @@ void BQ769x2_Init()
     //BQ769x2_SetRegister(CellBalanceMinCellVRelax,
     //    pBattParamsCfg->u16MinFullChgVoltThd_mV - 100, 2);
 
-    // Set up CUV (under-voltage) Threshold - 0x9275 = 0x31 (2479 mV)
-    // CUV Threshold is this value multiplied by 50.6mV
-    BQ769x2_SetRegister(CUVThreshold, 0x31, 1);
-    //BQ769x2_SetRegister(
-    //    CUVThreshold, pBattParamsCfg->u16MinBattVoltThd_mV / 51, 1);
-
-    // Set up COV (over-voltage) Threshold - 0x9278 = 0x55 (4301 mV)
-    // COV Threshold is this value multiplied by 50.6mV
-    //BQ769x2_SetRegister(COVThreshold, 0x55, 1);
-		BQ769x2_SetRegister(COVThreshold, 0x4B, 1);//3.8V
-    //BQ769x2_SetRegister(
-    //    COVThreshold, pBattParamsCfg->u16MaxBattVoltThd_mV / 51, 1);
-
+    // Set up CUV (under-voltage) Threshold - 0x9275
+    BQ769x2_SetRegister(CUVThreshold, packInfo->CUVvol, 1);
+    // Set up COV (over-voltage) Threshold - 0x9278
+		BQ769x2_SetRegister(COVThreshold, packInfo->COVvol, 1);
+    //Set up current unit
     BQ769x2_SetRegister(DAConfiguration,0x06,1);
     // Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
     BQ769x2_SetRegister(OCCThreshold, 0x05, 1);
@@ -454,3 +429,17 @@ void BQ769x2_ReadPassQ()
             RX_32Byte[8]);  //Bytes 8-11
 }
 //************************************End of BQ769x2 Measurement Commands******************************************
+//************************************Customer function************************************************************
+void Temperature_Pin_Initialize(const uint16_t *temperaturePinIndex, uint8_t temperatureNum){
+    for(int i = 0; i < temperatureNum; i++){
+		    BQ769x2_SetRegister(temperaturePinIndex[i], 0x07, 1);
+		}
+}
+
+void VolMode_Initialize(const uint8_t* cellIndex, uint8_t cellNum){
+    uint16_t volmode = 0;
+	  for(int i = 0; i < cellNum; i++){
+		    volmode += (0x1 << ((cellIndex[i] - Cell1Voltage) >> 1));
+		}
+		BQ769x2_SetRegister(VCellMode, volmode, 2);
+}

@@ -1,6 +1,5 @@
-../objects/faultprotect.o: ..\Code\App\Source\FaultProtect.c \
-  ..\Code\App\Header\FaultProtect.h \
-  ..\Code\Comm\Header\BQ769x2_protocol.h \
+../objects/batconfig.o: ..\Code\BMS\Source\BatConfig.c \
+  ..\Code\BMS\Header\BatConfig.h ..\Code\Comm\Header\BQ769x2_protocol.h \
   ..\Code\BSW\Header\myMCUCommBSW.h ..\..\test1\ti\devices\msp\msp.h \
   ..\..\test1\ti\devices\DeviceFamily.h \
   ..\..\test1\ti\devices\msp\m0p\mspm0g350x.h \
@@ -68,5 +67,4 @@
   ..\..\test1\ti\driverlib\m0p\dl_interrupt.h \
   ..\..\test1\ti\driverlib\m0p\dl_systick.h \
   ..\..\test1\ti\iqmath\include\IQmathLib.h ..\keil\ti_msp_dl_config.h \
-  ..\Code\BMS\Header\BatConfig.h ..\Code\Comm\Header\I2C_comm.h \
-  ..\Code\Comm\Header\PC_protocol.h ..\Code\Comm\Header\UART_comm.h
+  ..\Code\Comm\Header\I2C_comm.h

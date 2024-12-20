@@ -9,6 +9,8 @@
 "..\objects\mymcucommbsw.o"
 "..\objects\dataprocess.o"
 "..\objects\faultprotect.o"
+"..\objects\b5_soc.o"
+"..\objects\batconfig.o"
 --strict --scatter "./mspm0g3507.sct"
 ..\ti\driverlib\lib\keil\m0p\mspm0g1x0x_g3x0x\driverlib.a --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

@@ -1,5 +1,4 @@
 #include "FaultProtect.h"
-double res = 0;
 
 void FaultProtect_init(){
 }
@@ -7,7 +6,7 @@ void FaultProtect_init(){
 void FaultDetect(){
   if(I2C_dead == 1){
 		  PcPointBuffer[fault] = I2C_dead;
-	    BQ769x2_Init();
+	    //BQ769x2_Init(&packInfo);
 	}else{
 		  PcPointBuffer[fault] = 0;
 	}

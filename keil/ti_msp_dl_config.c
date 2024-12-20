@@ -228,11 +228,6 @@ SYSCONFIG_WEAK void SYSCFG_DL_I2C_0_init(void) {
     DL_I2C_setControllerRXFIFOThreshold(I2C_0_INST, DL_I2C_RX_FIFO_LEVEL_BYTES_1);
     DL_I2C_enableControllerClockStretching(I2C_0_INST);
 
-    /* Configure Interrupts */
-    DL_I2C_enableInterrupt(I2C_0_INST,
-                           DL_I2C_INTERRUPT_CONTROLLER_NACK);
-
-    NVIC_SetPriority(I2C_0_INST_INT_IRQN, 3);
 
     /* Enable module */
     DL_I2C_enableController(I2C_0_INST);

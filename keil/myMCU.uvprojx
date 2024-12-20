@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>0</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>__MSPM0G3507__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\test1;..\Core\Include;..\keil;..\Code\BSW\Header;..\Code\Comm\Header;..\Code\App\Header</IncludePath>
+              <IncludePath>..\..\test1;..\Core\Include;..\keil;..\Code\BSW\Header;..\Code\Comm\Header;..\Code\App\Header;..\Code\BMS\Header</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -493,6 +493,31 @@
               <FileName>FaultProtect.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Code\App\Header\FaultProtect.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BMS</GroupName>
+          <Files>
+            <File>
+              <FileName>B5_SOC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Code\BMS\Source\B5_SOC.c</FilePath>
+            </File>
+            <File>
+              <FileName>BatConfig.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Code\BMS\Source\BatConfig.c</FilePath>
+            </File>
+            <File>
+              <FileName>B5_SOC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Code\BMS\Header\B5_SOC.h</FilePath>
+            </File>
+            <File>
+              <FileName>BatConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Code\BMS\Header\BatConfig.h</FilePath>
             </File>
           </Files>
         </Group>

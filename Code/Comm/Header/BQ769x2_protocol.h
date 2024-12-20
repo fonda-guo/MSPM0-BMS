@@ -2,6 +2,7 @@
 #ifndef BQ769X2_PROTOCOL_H_
 #define BQ769X2_PROTOCOL_H_
 #include "myMCUCommBSW.h"
+#include "BatConfig.h"
 //BQ769x2 General Program Header File
 #define CRC_Mode 0  // 0 for disabled, 1 for enabled
 #define R 0         //Read
@@ -465,7 +466,7 @@ extern int16_t Pack_Current;
 extern uint16_t CellVoltage[8];
 extern float Temperature[4];
 
-void BQ769x2_Init();
+void BQ769x2_Init(BatPackBasicInfo* packInfo);
 void BQ769x2_ReadAlarmStatus();
 void BQ769x2_ReadSafetyStatus();
 void BQ769x2_ReadPFStatus();
@@ -478,7 +479,7 @@ void BQ769x2_ReadFETStatus();
 void BQ769x2_ReadAllTemperatures();
 void CommandSubcommands(uint16_t command);
 void DirectCommands(uint8_t command, uint16_t data, uint8_t type);
-void BQ769x2_SetRegister(
-    uint16_t reg_addr, uint32_t reg_data, uint8_t datalen);
-
+void BQ769x2_SetRegister(uint16_t reg_addr, uint32_t reg_data, uint8_t datalen);
+void Temperature_Pin_Initialize(const uint16_t *temperatureIndex, uint8_t temperatureNum);
+void VolMode_Initialize(const uint8_t* cellIndex, uint8_t cellNum);
 #endif /* BQ769X2_PROTOCOL_H_ */
