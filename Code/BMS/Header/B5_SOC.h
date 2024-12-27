@@ -36,18 +36,21 @@
 // Included header
 //---------------------------------------------------------------------------
 #include <stdint.h>
+#include "BatConfig.h"
+#include "PC_protocol.h"
 //---------------------------------------------------------------------------
 // Constants and macros
 //---------------------------------------------------------------------------
 //basic parameter
-#define MAX_BAT_CAP          2160000000 //60Ah 60*10*3600*1000
-#define BAT_CAP_NINTY_PER    1944000000 //MAX_BAT_CAP*0.9
-#define BAT_CAP_QUARTER      540000000  //MAX_BAT_CAP*0.25
+#define MAX_BAT_CAP          115200000  //320Ah 320*10*3600*10(*100ms)
+#define NOMINAL_BAT_CAP      100800000  //280Ah 280*10*3600*10(*100ms)
+#define BAT_CAP_NINTY_PER    90720000   //NOMINAL_BAT_CAP*0.9
+#define BAT_CAP_QUARTER      25200000   //NOMINAL_BAT_CAP*0.25
 #define MAX_SOC              10000      //100*100
 #define MAX_SOH              10000      //100*100
-#define CNT_PERIOD           80         //80*3.75ms = 300 ms
-//sigle bat parameter
-#define BAT_NUM              18
+#define VOL_LOWER_BOUND      2900       //2.8V
+#define VOL_UPPER_BOUND      3580       //3.4V
+
 //status define macro
 #define START_UP_PROCESS           0x0001
 #define REACH_BAT_LOWER_BOUND      0x0002
@@ -56,12 +59,10 @@
 #define CYCLE_WRITE_EE             (REACH_BAT_LOWER_BOUND|\
                                     REACH_BAT_UPPER_BOUND)
 //Flash address(use EE in the formal version)
-#define E2_COULOMBTOTAL_ADDR            (0x00010000 + 8)
+#define E2_COULOMBTOTAL_ADDR            (0x00006000 + 0x400)                 //Next sector to prevent from being erased
 #define E2_BOXSOCCAL_ADDR               (E2_COULOMBTOTAL_ADDR + 8)
 #define E2_SINGLEBATCOULOMBTOTAL_ADDR   (E2_BOXSOCCAL_ADDR + 8)
-//#define E2_BOXTEMP_ADDR                 (PAGE1_ADD + 4 * 5)   
-#define E2_SINGLE_BAT_SOC_ADDR          (E2_BOXSOCCAL_ADDR +8)//8*uint32
-//#define E2_SINGLE_BAT_TEMP_ADDR         (PAGE3_ADD)
+#define E2_SINGLE_BAT_SOC_ADDR          (E2_SINGLEBATCOULOMBTOTAL_ADDR + 8)//8*8
 
 //Check and protect
 #define BOX_COULOMBTOTAL_FAULT       0x0001
@@ -90,20 +91,19 @@ typedef struct{
 
 typedef struct{
     uint16_t status;
-    uint16_t cnt;
-    uint16_t temperature;           // /10 -70
+    uint16_t temperature;           //10-70
     uint16_t BoxSOCShow;            //0~10000 stands for 0~1
     uint16_t BoxSOHShow;            //0~10000 stands for 0~1
-    uint32_t BoxCoulombCounter;     //0~2160000000
-    uint32_t BoxCoulombTotal;       //0~2160000000
-    uint32_t BoxSOCCal;             //0~2160000000
+    uint32_t BoxCoulombCounter;     //0 ~ MAX_BAT_CAP
+    uint32_t BoxCoulombTotal;       //0 ~ MAX_BAT_CAP
+    uint32_t BoxSOCCal;             //0 ~ MAX_BAT_CAP
     int32_t  BoxCoulombCounterCali;
 }BOXBMS;
 
 typedef struct{
     uint16_t BatVol;
     uint16_t BatTemp;
-    uint32_t BatCoulombSOC;          //0~2160000000
+    uint32_t BatCoulombSOC;          //0 ~ MAX_BAT_CAP
 }BATBMS;
 
 typedef struct{
@@ -115,7 +115,7 @@ typedef struct{
 //---------------------------------------------------------------------------
 EXTERN BOXINFO  boxInfo;
 EXTERN BOXBMS   boxBMS;
-EXTERN BATBMS   batBMS[BAT_NUM];
+EXTERN BATBMS   batBMS[CELL_NUM];
 EXTERN uint32_t BMSFaultBit;
 
 //EXTERN uint16_t  CalibVolTable[1] = {3150};
@@ -144,9 +144,6 @@ EXTERN void BoxSOCUpdate(void);
 EXTERN void SingleBatSOCCal(uint16_t batIndex);
 EXTERN void SingleBatSOCCoulombClear(void);
 EXTERN void SingleBatSOCCoulombFull(void);
-
-//Support functions
-EXTERN void Read32Flash(uint32_t* des, uint32_t addr);
 
 #undef EXTERN
 #endif

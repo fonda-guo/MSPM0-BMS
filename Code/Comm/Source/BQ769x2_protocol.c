@@ -243,7 +243,7 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     Temperature_Pin_Initialize(packInfo->thermistorPinIndex,THERMISTOR_NUM);		
 
     // 'VCell Mode' - Enable 16 cells - 0x9304 = 0x0000; Writing 0x0000 sets the default of 16 cells
-		VolMode_Initialize(packInfo->cellIndex,CELL_NUM);
+		VcellMode_Initialize(packInfo->cellIndex,CELL_NUM);
 		
     // Enable protections in 'Enabled Protections A' 0x9261 = 0xBC
     // Enables SCD (short-circuit), OCD1 (over-current in discharge), OCC (over-current in charge),
@@ -273,8 +273,12 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     BQ769x2_SetRegister(CUVThreshold, packInfo->CUVvol, 1);
     // Set up COV (over-voltage) Threshold - 0x9278
 		BQ769x2_SetRegister(COVThreshold, packInfo->COVvol, 1);
+		
     //Set up current unit
     BQ769x2_SetRegister(DAConfiguration,0x06,1);
+		//Set CCGain to calibration current
+    BQ769x2_SetRegister(CCGain,0x40F21AD2,4);//7.4768*1.0119
+		
     // Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
     BQ769x2_SetRegister(OCCThreshold, 0x05, 1);
     //BQ769x2_SetRegister(
@@ -436,7 +440,7 @@ void Temperature_Pin_Initialize(const uint16_t *temperaturePinIndex, uint8_t tem
 		}
 }
 
-void VolMode_Initialize(const uint8_t* cellIndex, uint8_t cellNum){
+void VcellMode_Initialize(const uint8_t* cellIndex, uint8_t cellNum){
     uint16_t volmode = 0;
 	  for(int i = 0; i < cellNum; i++){
 		    volmode += (0x1 << ((cellIndex[i] - Cell1Voltage) >> 1));

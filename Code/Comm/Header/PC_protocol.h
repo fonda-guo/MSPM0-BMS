@@ -20,14 +20,30 @@ typedef enum{
 	safetyStatusB,
 	safetyStatusC,
 	fet_Status,
-	ts1,
-	ts2,
+	ts1,                //temperature
+	ts2,                //temperature
 	ts3,
 	ts4,
 	current,
 	test_cnter,
+	debug_register1,
+	debug_register2,
+	SOC_box,
+	SOC_cell1,
+	SOC_cell2,
+	SOC_cell3,
+	SOC_cell4,
+	SOC_cell5,
+	SOC_cell6,
+	SOC_cell7,
+	SOC_cell8,
+	SOH_box,
+	maxcellvol,
+	mincellvol,
 	//add before here
 	fault,
+  debug_addr1,
+	debug_addr2,
 	u16_pc_buffer_num,
 }PC_point;
 
@@ -37,7 +53,6 @@ extern uint8_t SendBuffer[8];
 extern uint16_t PcPointBuffer[u16_pc_buffer_num];
 extern bool UART_Fault;
 
-void PC_RecData();
 void PC_SendData(PC_point pcpoint);
 void PC_protocol_init();
 void PC_sendDataPoll();

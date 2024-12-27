@@ -68,4 +68,5 @@
   ..\..\test1\ti\iqmath\include\IQmathLib.h \
   ..\Code\Comm\Header\UART_comm.h ..\Code\Comm\Header\BQ769x2_protocol.h \
   ..\Code\BMS\Header\BatConfig.h ..\Code\Comm\Header\I2C_comm.h \
-  ..\Code\App\Header\DataProcess.h ..\Code\App\Header\FaultProtect.h
+  ..\Code\App\Header\DataProcess.h ..\Code\App\Header\FaultProtect.h \
+  ..\Code\BMS\Header\B5_SOC.h

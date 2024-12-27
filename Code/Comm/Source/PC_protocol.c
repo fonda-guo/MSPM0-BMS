@@ -5,6 +5,13 @@ uint8_t SendBuffer[8] = {0};
 uint16_t PcPointBuffer[u16_pc_buffer_num] = {0};
 uint8_t TrashCan[8] = {0};
 bool UART_Fault = false;
+
+void DebugRegiter(){
+    uint32_t *pointer = (uint32_t *)((PcPointBuffer[debug_addr1] << 16) + PcPointBuffer[debug_addr2]);
+	  PcPointBuffer[debug_register1] = *pointer >> 16;
+	  PcPointBuffer[debug_register2] = *pointer & 0xFFFF;
+}
+
 void PC_ProcessData(){
     if((RecBuffer[0] != MCU_ADDR) || (RecBuffer[7] != '\n')){
 			UART_Fault = true;
@@ -26,37 +33,14 @@ void PC_ProcessData(){
 			uint16_t data = RecBuffer[4];
 			data = (data << 8) + RecBuffer[5];
  			PcPointBuffer[pcpoint] = data;
+			//debug address
+			if(pcpoint == debug_addr1 || pcpoint == debug_addr2){
+			    DebugRegiter();
+			}
 			memset((void*)RecBuffer,0,8);
 		}else{
       UART_Fault = true;
 			return;
-		}
-}
-
-
-
-void PC_RecData(){
-	  uint8_t index = 0;
-    while(!DL_UART_isRXFIFOEmpty(UART_0_INST) && (index < 8)){
-		   RecBuffer[index] = DL_UART_receiveData(UART_0_INST);
-			 delayUS(100);
-			 index++;
-		}
-    if((RecBuffer[0] != MCU_ADDR) || (RecBuffer[7] != '\n')) return;
-		uint16_t pcpoint = RecBuffer[2];
-		pcpoint = (pcpoint << 8) + RecBuffer[3];
-		if((pcpoint < 0)||(pcpoint >= u16_pc_buffer_num)) return;
-		if(RecBuffer[1] == 0){
-		  //read
-			PC_SendData(pcpoint);
-			memset((void*)RecBuffer,0,8);
-		}else if(RecBuffer[1] == 0x1){
-		  //write
-			uint16_t data = RecBuffer[4];
-			data = (data << 8) + RecBuffer[5];
- 			PcPointBuffer[pcpoint] = data;
-		}else{
-		  return;
 		}
 }
 

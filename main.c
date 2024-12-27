@@ -3,12 +3,11 @@
 #include "BQ769x2_protocol.h"
 #include "DataProcess.h"
 #include "FaultProtect.h"
+#include "B5_SOC.h"
 
-#define SW_VER_ADDRESS (0x00010000)
-uint32_t SW_VER = 0x24122001;
+#define SW_VER_ADDRESS (0x00006000)
+uint32_t SW_VER = 0x24122701;
 
-uint32_t gData= 0x0;
-uint32_t *p = 0;
 
 int main(void)
 {
@@ -42,11 +41,17 @@ int main(void)
     FaultProtect_init();
 
     DL_TimerG_startCounter(TIMER_INST);
+		
+		BMSInit();
+		
     while (1) {
 			
 			DL_GPIO_togglePins(GPIO_LED_PORT,GPIO_LED_USER_LED_2B_PIN);
 			
 			BQDataGet();
+			
+			//Check if battery voltage reaches the threshold
+      BMSSingleBatVolCheck();
 			
 			FaultDetect();
 			
@@ -74,15 +79,7 @@ void TIMER_INST_IRQHandler(void)
         case DL_TIMER_IIDX_ZERO:
 				     if(PcPointBuffer[test_cnter] == 65535) PcPointBuffer[test_cnter] = 0;
 				     PcPointBuffer[test_cnter]++;
-//				     p = (void *)MAIN_BASE_ADDRESS;
-//				     gData = *p;
-//				     if(gData == 0xFFFFFFFF) gData = 0;
-//				     gData++;
-//				     DL_FlashCTL_unprotectSector(FLASHCTL, MAIN_BASE_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
-//             DL_FlashCTL_eraseMemoryFromRAM(FLASHCTL, MAIN_BASE_ADDRESS, DL_FLASHCTL_COMMAND_SIZE_SECTOR);
-//             DL_FlashCTL_unprotectSector(FLASHCTL, MAIN_BASE_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
-//             DL_FlashCTL_programMemory32WithECCGenerated(FLASHCTL, (MAIN_BASE_ADDRESS), &gData);
-//				     DL_FlashCTL_waitForCmdDone(FLASHCTL);
+				     BMSTask();
              break;
         default:
              break;

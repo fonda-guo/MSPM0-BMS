@@ -9,12 +9,18 @@ void Driver_I2cInit(void)
 void BQDataGet(){
 	  //clear buffer
 	  DL_I2C_flushControllerRXFIFO(I2C_0_INST);
-	
+	  
+	  PcPointBuffer[cell7Vol] = BQ769x2_ReadVoltage(Cell15Voltage);
+		PcPointBuffer[maxcellvol] = PcPointBuffer[cell7Vol];
+		PcPointBuffer[mincellvol] = PcPointBuffer[cell7Vol];
     for(int i = 0; i < 6; i++){
         PcPointBuffer[i] = BQ769x2_ReadVoltage(Cell1Voltage + 2*i);
+			  PcPointBuffer[maxcellvol] = (PcPointBuffer[maxcellvol] > PcPointBuffer[i]) ? PcPointBuffer[maxcellvol] : PcPointBuffer[i];
+			  PcPointBuffer[mincellvol] = (PcPointBuffer[mincellvol] < PcPointBuffer[i]) ? PcPointBuffer[mincellvol] : PcPointBuffer[i];
     }
-		PcPointBuffer[6] = BQ769x2_ReadVoltage(Cell15Voltage);
-		PcPointBuffer[7] = BQ769x2_ReadVoltage(Cell16Voltage);
+		PcPointBuffer[cell8Vol] = BQ769x2_ReadVoltage(Cell16Voltage);
+		PcPointBuffer[maxcellvol] = (PcPointBuffer[maxcellvol] > PcPointBuffer[cell8Vol]) ? PcPointBuffer[maxcellvol] : PcPointBuffer[cell8Vol];
+		PcPointBuffer[mincellvol] = (PcPointBuffer[mincellvol] < PcPointBuffer[cell8Vol]) ? PcPointBuffer[mincellvol] : PcPointBuffer[cell8Vol];
 		
 		PcPointBuffer[stackVol] = BQ769x2_ReadVoltage(StackVoltage);
 	  PcPointBuffer[LDpinVol] = BQ769x2_ReadVoltage(LDPinVoltage);
