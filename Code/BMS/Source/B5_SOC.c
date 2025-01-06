@@ -80,7 +80,10 @@ void BMSInit(void){
     boxInfo.DataCheck              = 0;
 
     memset(batBMS,0,sizeof(batBMS));
-
+	  
+	  memset(&cellR,0,sizeof(cellR));
+    cellR.statusR = INIT_R_CAL;  
+	
     dC = 0;
 }
 /***************************************************************************************/
@@ -99,7 +102,7 @@ void BMSTask(void){
     //Calculation task every 300 ms
     BMSCalTask();
     //Check & write EE after cycle
-    BMSCoulombTotalUpdate();  
+    BMSCoulombTotalFinalUpdate();  
     //except CoulombTotal, INFO needs to be stored in EE will execute here
     BMSWriteEETask();
 }
@@ -178,13 +181,15 @@ void BMSBasicDataGet(void){
  *///
 /***************************************************************************************/
 void BMSCalTask(void){
-    int16_t I = PcPointBuffer[current];//uint16->int16
+    int16_t I = PcPointBuffer[current];//uint16->int16 10 times
     //every 500ms
-    I = (int16_t)((float)I / 25 * 10);//25 is the shunt ratio,10 times of current
+    //I = (int16_t)((float)I / 25 * 10);//25 is the shunt ratio,10 times of current
 	
     dC = I * -5;//5 stands for 500ms
 
     DataCheck();
+	
+	  ResistanceCal(I);
 
     TemperatureCali();
 
@@ -193,8 +198,11 @@ void BMSCalTask(void){
     SingleBatSOCupdate();
 
     BoxCoulombCount();
+	
+	  BMSCoulombTotalRealTimeUpdate();
 
     BoxSOCUpdate();
+	  
 }
 /***************************************************************************************/
 /*
@@ -219,12 +227,12 @@ void BMSSingleBatVolCheck(void){
 /***************************************************************************************/
 /*
  * Function              
- * @param[in]            none
+ * @param[in]            Do this calibration when reaching the upper/lower voltage
  * @return               none
  * \brief                
  *///
 /***************************************************************************************/
-void BMSCoulombTotalUpdate(void){
+void BMSCoulombTotalFinalUpdate(void){
     if((boxBMS.status & CYCLE_CALIB_ENABLE) == 0) return;
     if((boxBMS.status & CYCLE_WRITE_EE) == 0)     return;
  
@@ -266,8 +274,10 @@ void BMSWriteEETask(void){
 		}else if(writeEEcnt >= 120 && writeEEcnt <= 127){
 		    Write32Flash(&SingleBatSOCEEWriteBuffer[writeEEcnt - 120], E2_SINGLE_BAT_SOC_ADDR + 8 * (writeEEcnt - 120));
 		}else if(writeEEcnt == 128){			   
-        Write32Flash(&boxBMS.BoxCoulombTotal,E2_COULOMBTOTAL_ADDR);
-		}else if(writeEEcnt > 128){
+        Write32Flash(&boxBMS.BoxCoulombTotal, E2_COULOMBTOTAL_ADDR);
+		}else if(writeEEcnt == 129){
+		    Write32Flash(&boxInfo.SingleBatCoulombTotal, E2_SINGLEBATCOULOMBTOTAL_ADDR);
+		}else if(writeEEcnt > 129){
 		    writeEEcnt = 0;
 		}
 }
@@ -280,6 +290,63 @@ uint32_t BatSOCVolInitEstimate(uint16_t vol, uint16_t temperature, uint32_t coul
 
 void DataCheck(void){
     
+}
+/***************************************************************************************/
+/*
+ * Function              
+ * @param[in]            current
+ * @return               none
+ * \brief                calculation equivalent resistance
+ *///
+/***************************************************************************************/
+void ResistanceCal(int16_t Current){
+	  if(boxInfo.MinBatVol < START_VOL_LOWER|| boxInfo.MaxBatVol > START_VOL_UPPER) return;
+	
+	  //staus init
+	  if(cellR.statusR == INIT_R_CAL){
+			cellR.cnt = 0;
+			cellR.CurrentLastTime = Current;
+			for(int i = 0; i < CELL_NUM; i++){
+				  cellR.voltage[i] = batBMS[i].BatVol;
+				}
+			cellR.statusR = READY_R_CAL;
+			return;
+		}
+		//status ready, most time it goes here
+		if(cellR.statusR == READY_R_CAL){
+			int16_t dcur = abs_value(Current - cellR.CurrentLastTime);
+			if(dcur >= START_CURRENT_THRESHOLD){
+				cellR.abs_dcur = dcur;
+			  cellR.CurrentLastTime = Current;
+				cellR.statusR = R_WAITING;
+			}else{
+			  //no step current still ready state
+				cellR.CurrentLastTime = Current;
+				for(int i = 0; i < CELL_NUM; i++){
+				  cellR.voltage[i] = batBMS[i].BatVol;
+				}
+			}
+			return;
+		}
+		//status waiting
+		if(cellR.statusR == R_WAITING){
+		    if(abs_value(Current - cellR.CurrentLastTime) <= CURRENT_ERROR_RANGE){
+					  cellR.cnt++;
+				    if(cellR.cnt == DELAY_CNT){
+						    for(int i = 0; i < CELL_NUM; i++){
+									 if(cellR.abs_dcur < START_CURRENT_THRESHOLD) cellR.statusR = INIT_R_CAL;
+									
+								   float r = (float)(abs_value(batBMS[i].BatVol - cellR.voltage[i])) * 10000 / cellR.abs_dcur;//micro-omega *1000*10
+									 cellR.resis_cell[i] = (uint16_t)r;
+									 //
+									 PcPointBuffer[resis_cell1 + i] = cellR.resis_cell[i];
+								}
+								cellR.statusR = INIT_R_CAL;
+						}
+				}else{
+				   cellR.statusR = INIT_R_CAL;
+				}
+		}
 }
 void VolCali(void){
 
@@ -398,6 +465,29 @@ void BoxSOCUpdate(void){
     boxBMS.BoxSOCCal = boxBMS.BoxCoulombCounter;
 	  BoxSOCEEBuffer = boxBMS.BoxSOCCal;
 }
+/***************************************************************************************/
+/*
+ * Function              
+ * @param[in]            Do this calibration periodically
+ * @return               none
+ * \brief                
+ *///
+/***************************************************************************************/
+void BMSCoulombTotalRealTimeUpdate(void){
+    if(boxBMS.BoxCoulombCounter == 0){
+		    boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
+				boxInfo.SingleBatCoulombTotal += boxBMS.BoxCoulombCounterCali;
+			  boxBMS.BoxCoulombCounterCali = 0;
+		}
+		if(boxBMS.BoxCoulombCounter == boxBMS.BoxCoulombTotal){
+		    boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
+			  boxBMS.BoxCoulombCounter += boxBMS.BoxCoulombCounterCali;
+			  boxInfo.SingleBatCoulombTotal += boxBMS.BoxCoulombCounterCali;
+			  boxBMS.BoxCoulombCounterCali = 0;
+		}
+
+}
+
 //used for now, a more accurate calibration method is needed later 
 void SingleBatSOCCoulombClear(void){
     uint16_t batIndex = 0;
@@ -428,7 +518,7 @@ void Read32Flash(uint32_t* des, uint32_t addr){
 }
 /***************************************************************************************/
 /*
- * Function              Read32Flash
+ * Function              Write32Flash
  * @param[in]            destination varaible and address in flash
  * @return               none
  * \brief                
@@ -441,3 +531,8 @@ void Write32Flash(uint32_t* datapointer, uint32_t addr){
 	  DL_FlashCTL_unprotectSector(FLASHCTL, addr, DL_FLASHCTL_REGION_SELECT_MAIN);
     DL_FlashCTL_programMemory32WithECCGenerated(FLASHCTL, addr, datapointer);
 }
+
+int16_t abs_value(int16_t error){
+	return error < 0 ? (-error): (error);
+}
+

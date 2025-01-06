@@ -29,8 +29,8 @@ void BQDataGet(){
 		    PcPointBuffer[ts1 + i] = (uint16_t)(Temperature[i] * 10);//float occupies 4 bytes
 		}
 		//current
-		BQ769x2_ReadCurrent();
-		memcpy(&PcPointBuffer[current],&Pack_Current,2);
+		//BQ769x2_ReadCurrent();
+		//memcpy(&PcPointBuffer[current],&Pack_Current,2);
 }
 
 

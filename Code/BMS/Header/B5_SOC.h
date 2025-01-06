@@ -42,14 +42,24 @@
 // Constants and macros
 //---------------------------------------------------------------------------
 //basic parameter
-#define MAX_BAT_CAP          115200000  //320Ah 320*10*3600*10(*100ms)
-#define NOMINAL_BAT_CAP      100800000  //280Ah 280*10*3600*10(*100ms)
-#define BAT_CAP_NINTY_PER    90720000   //NOMINAL_BAT_CAP*0.9
-#define BAT_CAP_QUARTER      25200000   //NOMINAL_BAT_CAP*0.25
+#define MAX_BAT_CAP          118800000  //330Ah 330*10*3600*10(*100ms)
+#define NOMINAL_BAT_CAP      108000000  //300Ah 300*10*3600*10(*100ms)
+#define BAT_CAP_NINTY_PER    97200000   //NOMINAL_BAT_CAP*0.9
+#define BAT_CAP_QUARTER      27000000   //NOMINAL_BAT_CAP*0.25
 #define MAX_SOC              10000      //100*100
 #define MAX_SOH              10000      //100*100
-#define VOL_LOWER_BOUND      2900       //2.8V
-#define VOL_UPPER_BOUND      3580       //3.4V
+#define VOL_LOWER_BOUND      2900       //2.9V
+#define VOL_UPPER_BOUND      3580       //3.58V
+	
+//resistance
+#define DELAY_CNT                10         //5s
+#define CURRENT_ERROR_RANGE      2          //+- 0.2A
+#define START_CURRENT_THRESHOLD  50
+#define START_VOL_LOWER          3350
+#define START_VOL_UPPER          3420
+#define INIT_R_CAL               0x01
+#define READY_R_CAL              0x02
+#define R_WAITING                0x04
 
 //status define macro
 #define START_UP_PROCESS           0x0001
@@ -107,16 +117,26 @@ typedef struct{
 }BATBMS;
 
 typedef struct{
+	  uint8_t statusR;
+	  uint8_t cnt;
+	  int16_t CurrentLastTime;
+	  int16_t abs_dcur;
+	  uint16_t voltage[CELL_NUM];
+	  uint16_t resis_cell[CELL_NUM];
+}CellResistance;
+
+typedef struct{
     uint16_t VolCheckIndex;
 }TOBEDONE;
 
 //---------------------------------------------------------------------------
 // Public variables
 //---------------------------------------------------------------------------
-EXTERN BOXINFO  boxInfo;
-EXTERN BOXBMS   boxBMS;
-EXTERN BATBMS   batBMS[CELL_NUM];
-EXTERN uint32_t BMSFaultBit;
+EXTERN BOXINFO          boxInfo;
+EXTERN BOXBMS           boxBMS;
+EXTERN BATBMS           batBMS[CELL_NUM];
+EXTERN CellResistance   cellR;
+EXTERN uint32_t         BMSFaultBit;
 
 //EXTERN uint16_t  CalibVolTable[1] = {3150};
 //EXTERN uint16_t  CaliSOCTable[1]  = {1200};
@@ -130,20 +150,23 @@ EXTERN void BMSStartUp(void);
 EXTERN void BMSBasicDataGet(void);
 EXTERN void BMSCalTask(void);
 EXTERN void BMSSingleBatVolCheck(void);
-EXTERN void BMSCoulombTotalUpdate(void);
+EXTERN void BMSCoulombTotalFinalUpdate(void);
 EXTERN void BMSWriteEETask(void);
 
 //Detail functions
 EXTERN uint32_t BatSOCVolInitEstimate(uint16_t vol, uint16_t temperature, uint32_t coulombSOC);
 EXTERN void DataCheck(void);
+EXTERN void ResistanceCal(int16_t Current);
 EXTERN void TemperatureCali(void);
 EXTERN void SingleBatSOCupdate(void);
 EXTERN void BoxCoulombCount(void);
+EXTERN void BMSCoulombTotalRealTimeUpdate(void);
 EXTERN void BoxSOCUpdate(void);
 
 EXTERN void SingleBatSOCCal(uint16_t batIndex);
 EXTERN void SingleBatSOCCoulombClear(void);
 EXTERN void SingleBatSOCCoulombFull(void);
 
+EXTERN int16_t abs_value(int16_t error);
 #undef EXTERN
 #endif
