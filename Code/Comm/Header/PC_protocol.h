@@ -2,8 +2,9 @@
 #define PC_PROTOCOL_H_
 #include "myMCUCommBSW.h"
 #include "UART_comm.h"
-#define MCU_ADDR 7
 
+
+#define MCU_ADDR 7
 typedef enum{
   cell1Vol,
 	cell2Vol,
@@ -48,10 +49,20 @@ typedef enum{
 	resis_cell6,
 	resis_cell7,
 	resis_cell8,
+	dVdC1,
+	dVdC2,
+	dVdC3,
+	dVdC4,
+	dVdC5,
+	dVdC6,
+	dVdC7,
+	dVdC8,
+	CB_bits,
 	//add before here
 	fault,
   debug_addr1,
 	debug_addr2,
+	controlBits,
 	u16_pc_buffer_num,
 }PC_point;
 

@@ -14,9 +14,9 @@
  * @date           2024/12/20
  * @version        0.0
  *----------------------------------------------------------------
- * @par Project    B5
- * @par Compiler   TI v20.2.4.LTS
- * @par Processor  TMS320F280025
+ * @par Project    G2
+ * @par Compiler   ARM
+ * @par Processor  STMH5
  *----------------------------------------------------------------
  * @copyright Copyright (c) 2021 Star Charge (Hangzhou).
  *----------------------------------------------------------------
@@ -82,7 +82,10 @@ void BMSInit(void){
     memset(batBMS,0,sizeof(batBMS));
 	  
 	  memset(&cellR,0,sizeof(cellR));
-    cellR.statusR = INIT_R_CAL;  
+    cellR.statusR = INIT_R_CAL;
+
+    memset(&cellBalance,0,sizeof(cellBalance));
+		cellBalance.statusCB = CB_ON;
 	
     dC = 0;
 }
@@ -99,7 +102,7 @@ void BMSTask(void){
     BMSStartUp();
     //Get voltage & temperature
     BMSBasicDataGet();
-    //Calculation task every 300 ms
+    //Calculation task every 500 ms
     BMSCalTask();
     //Check & write EE after cycle
     BMSCoulombTotalFinalUpdate();  
@@ -123,6 +126,9 @@ void BMSStartUp(void){
     if(boxInfo.SingleBatCoulombTotal > MAX_BAT_CAP || boxInfo.SingleBatCoulombTotal < BAT_CAP_QUARTER){
         boxInfo.SingleBatCoulombTotal = BAT_CAP_NINTY_PER;
     }
+		//Init
+		boxInfo.MaxBatSOC = 0;
+		boxInfo.MinBatSOC = boxInfo.SingleBatCoulombTotal;
 
     //Bat E2 Initial
     uint16_t index = 0;
@@ -131,6 +137,8 @@ void BMSStartUp(void){
         batBMS[index].BatTemp  = PcPointBuffer[ts1 + index/2]; //ts1-> cell1,2;ts2->cell3,4
 			  Read32Flash(&SingleBatSOCEEReadBuffer[index], E2_SINGLE_BAT_SOC_ADDR + index*8);
         batBMS[index].BatCoulombSOC = BatSOCVolInitEstimate(batBMS[index].BatVol,batBMS[index].BatTemp,SingleBatSOCEEReadBuffer[index]);
+			  boxInfo.MaxBatSOC = (boxInfo.MaxBatSOC > batBMS[index].BatCoulombSOC) ? boxInfo.MaxBatSOC : batBMS[index].BatCoulombSOC;
+			  boxInfo.MinBatSOC = (boxInfo.MinBatSOC < batBMS[index].BatCoulombSOC) ? boxInfo.MinBatSOC : batBMS[index].BatCoulombSOC;
     }
 		
     //BOX E2 Initial
@@ -140,12 +148,8 @@ void BMSStartUp(void){
     if(boxBMS.BoxCoulombTotal > MAX_BAT_CAP || boxBMS.BoxCoulombTotal < BAT_CAP_QUARTER){
         boxBMS.BoxCoulombTotal = BAT_CAP_NINTY_PER;
     }
-    //initial value
-		if(boxBMS.BoxSOCCal > MAX_BAT_CAP){
-			  boxBMS.BoxCoulombCounter = BAT_CAP_QUARTER;
-    }else{
-		    boxBMS.BoxCoulombCounter = boxBMS.BoxSOCCal;
-		}
+    //BOX SOC initial value
+		BoxSOCInitEstimate();
     memset(SingleBatSOCEEReadBuffer,0,sizeof(SingleBatSOCEEReadBuffer));
     boxBMS.status &= (~START_UP_PROCESS);
     return;
@@ -182,6 +186,7 @@ void BMSBasicDataGet(void){
 /***************************************************************************************/
 void BMSCalTask(void){
     int16_t I = PcPointBuffer[current];//uint16->int16 10 times
+
     //every 500ms
     //I = (int16_t)((float)I / 25 * 10);//25 is the shunt ratio,10 times of current
 	
@@ -202,6 +207,8 @@ void BMSCalTask(void){
 	  BMSCoulombTotalRealTimeUpdate();
 
     BoxSOCUpdate();
+		
+		CellBalanceTask();
 	  
 }
 /***************************************************************************************/
@@ -283,9 +290,22 @@ void BMSWriteEETask(void){
 }
 //To be done
 uint32_t BatSOCVolInitEstimate(uint16_t vol, uint16_t temperature, uint32_t coulombSOC){
-  if(coulombSOC > MAX_BAT_CAP)   coulombSOC = BAT_CAP_QUARTER;
+	int16_t I = PcPointBuffer[current];
+  int16_t abs_I = abs_value(I);
+	if(abs_I < 5){
+	     uint32_t coulombSOCEst = BatSOCVolEst_NoCur(vol, coulombSOC);
+		   if(coulombSOCEst > MAX_BAT_CAP)   return BAT_CAP_QUARTER;
+		   return coulombSOCEst;
+	}else if(abs_I < 20){
 	
-	return coulombSOC;
+	}else{
+	
+	}
+	
+	
+	//if(coulombSOC > MAX_BAT_CAP)   coulombSOC = BAT_CAP_QUARTER;
+	
+	return BAT_CAP_QUARTER;
 }
 
 void DataCheck(void){
@@ -347,9 +367,6 @@ void ResistanceCal(int16_t Current){
 				   cellR.statusR = INIT_R_CAL;
 				}
 		}
-}
-void VolCali(void){
-
 }
 /***************************************************************************************/
 /*
@@ -536,3 +553,123 @@ int16_t abs_value(int16_t error){
 	return error < 0 ? (-error): (error);
 }
 
+uint32_t BatSOCVolEst_NoCur(uint16_t vol, uint32_t coulombSOC){
+    uint8_t index = BiSearch(nocur_voltbl.vol_table, nocur_voltbl.len, vol);
+	  uint16_t SOC_vol_estimate = nocur_voltbl.soc_table[index];
+	  uint16_t EESOC = (uint16_t)(((float)coulombSOC/boxInfo.SingleBatCoulombTotal) * 100);
+	  if(abs_value(SOC_vol_estimate - EESOC) >= nocur_voltbl.soc_error_range[index]){    
+			if(index < nocur_voltbl.len - 1){
+			    float ratio = ((float)nocur_voltbl.soc_table[index + 1] - SOC_vol_estimate)/(nocur_voltbl.vol_table[index + 1] - nocur_voltbl.vol_table[index]);
+				  SOC_vol_estimate += ratio * (vol - nocur_voltbl.vol_table[index]);
+			}
+			uint32_t new_couombSOC = (uint32_t)((float)boxInfo.SingleBatCoulombTotal / 100 * SOC_vol_estimate);
+			return new_couombSOC;
+		}else{
+			return coulombSOC;
+		}
+}
+
+void BoxSOCInitEstimate(void){
+    uint16_t MaxBatSOC = (uint16_t)(((float)boxInfo.MaxBatSOC/boxInfo.SingleBatCoulombTotal) * 100);
+	  uint16_t MinBatSOC = (uint16_t)(((float)boxInfo.MinBatSOC/boxInfo.SingleBatCoulombTotal) * 100);
+    uint16_t BoxSOC    = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 100);
+    if(BoxSOC <= MaxBatSOC && BoxSOC >= MinBatSOC){
+			  boxBMS.BoxCoulombCounter = boxBMS.BoxSOCCal;
+			  return;
+		}
+    uint16_t d = MaxBatSOC - MinBatSOC;
+		BoxSOC = MinBatSOC + MinBatSOC * (float)d /(100 - d);
+    boxBMS.BoxSOCCal = (uint32_t)((float)boxBMS.BoxCoulombTotal / 100 * BoxSOC);
+		boxBMS.BoxCoulombCounter = boxBMS.BoxSOCCal;
+		return;
+}
+/***************************************************************************************/
+/*
+ * Function              CellBalanceTask
+ * @param[in]            void
+ * @return               none
+ * \brief                to be done
+ *///
+/***************************************************************************************/
+void CellBalanceTask(void){
+	// DONT USE I2C in the interrupt!!!!!
+	if(dC < NO_CURRENT_THRESHOLD*5 && dC > -NO_CURRENT_THRESHOLD*5){
+		//if not open, open up, else continue
+		if(cellBalance.statusCB == CB_OFF) cellBalance.statusCB |= CB_TURN_ON;
+	   
+	}else{
+		//chg or dischg
+		if(cellBalance.cnt == 0){
+		    for(int i = 0; i < CELL_NUM; i++){
+				    cellBalance.VolLastTime[i] = batBMS[i].BatVol;
+				}
+				//check if condition is suitable for balance
+			  if(PcPointBuffer[SOC_box] < packInfo.CB_SOCLowThreshold*100){
+					//should close
+					if((cellBalance.statusCB & CB_ON)){
+					   cellBalance.statusCB |= CB_TURN_OFF;
+					}					
+				}else{
+				  if(PcPointBuffer[maxcellvol] < packInfo.CB_VolStartThreshold){
+					  //should close
+					  if((cellBalance.statusCB & CB_ON)){
+					    cellBalance.statusCB |= CB_TURN_OFF;
+					  }
+					}else{
+						//should open
+						if(!(cellBalance.statusCB & CB_ON) && !(cellBalance.statusCB & CB_FORBIDEN)){
+					    cellBalance.statusCB |= CB_TURN_ON;
+					  }
+					}
+				}
+		}
+
+		cellBalance.cnt++;
+		cellBalance.dCSum += dC;
+		//Calculate dVdC
+		if(cellBalance.cnt == 10){
+		  cellBalance.cnt = 0;
+			uint32_t abs_dCSum = cellBalance.dCSum < 0 ? (-cellBalance.dCSum) : cellBalance.dCSum;
+			if(abs_dCSum >= 50 && abs_dCSum <= 200000){
+			  for(int i = 0; i < CELL_NUM; i++){
+					float dV = 0;
+					if(cellBalance.dCSum > 0){//>0 means discharge
+						batBMS[i].BatVol > cellBalance.VolLastTime[i] ? (dV = 0) : (dV = cellBalance.VolLastTime[i] - batBMS[i].BatVol);
+					}else{
+					  batBMS[i].BatVol < cellBalance.VolLastTime[i] ? (dV = 0) : (dV = batBMS[i].BatVol - cellBalance.VolLastTime[i]);
+					}
+				  cellBalance.dVdC[i] = (uint16_t)(dV * 1000000 / abs_dCSum);
+					PcPointBuffer[dVdC1 + i] = cellBalance.dVdC[i];
+				}	
+			}else{
+			   for(int i = 0; i < CELL_NUM; i++){
+				  cellBalance.dVdC[i] = 1;
+					PcPointBuffer[dVdC1 + i] = cellBalance.dVdC[i];
+				 }
+			}
+			cellBalance.dCSum = 0;		
+	  }
+  }
+}
+
+uint8_t BiSearch(const uint16_t* arr, uint8_t len, uint16_t value){
+	  uint8_t low = 0;
+	  uint8_t high = len - 1;
+	  uint8_t mid = 0;
+	  while(low <= high){
+		  mid = (high + low)/2;
+			if(arr[mid] > value){
+			    high = mid - 1;
+			}else{
+			    low = mid + 1;
+			}
+		}
+    return high;
+}
+/***************************************************************************************/
+/*Calibration PART
+ *///
+/***************************************************************************************/
+void VolCali(void){
+
+}

@@ -38,6 +38,7 @@
 #include <stdint.h>
 #include "BatConfig.h"
 #include "PC_protocol.h"
+#include "BQ769X2_protocol.h"
 //---------------------------------------------------------------------------
 // Constants and macros
 //---------------------------------------------------------------------------
@@ -46,9 +47,10 @@
 #define NOMINAL_BAT_CAP      108000000  //300Ah 300*10*3600*10(*100ms)
 #define BAT_CAP_NINTY_PER    97200000   //NOMINAL_BAT_CAP*0.9
 #define BAT_CAP_QUARTER      27000000   //NOMINAL_BAT_CAP*0.25
+	
 #define MAX_SOC              10000      //100*100
 #define MAX_SOH              10000      //100*100
-#define VOL_LOWER_BOUND      2900       //2.9V
+#define VOL_LOWER_BOUND      2700       //2.7V
 #define VOL_UPPER_BOUND      3580       //3.58V
 	
 //resistance
@@ -60,6 +62,18 @@
 #define INIT_R_CAL               0x01
 #define READY_R_CAL              0x02
 #define R_WAITING                0x04
+
+//cell balance
+#define CB_OFF                   0x00
+#define CB_FORBIDEN              0x10
+#define CB_ON                    0x01
+#define CB_STATUS_BIT            0x01
+#define CB_TURN_ON               0x02
+#define CB_TURN_OFF              0x04
+
+//current
+#define NO_CURRENT_THRESHOLD     5
+
 
 //status define macro
 #define START_UP_PROCESS           0x0001
@@ -111,9 +125,11 @@ typedef struct{
 }BOXBMS;
 
 typedef struct{
+	  uint8_t  BatSOCCaliStatus;       //whether Bat SOC is under calibration
     uint16_t BatVol;
     uint16_t BatTemp;
     uint32_t BatCoulombSOC;          //0 ~ MAX_BAT_CAP
+	  uint32_t BatSOCCal;
 }BATBMS;
 
 typedef struct{
@@ -126,6 +142,14 @@ typedef struct{
 }CellResistance;
 
 typedef struct{
+	  uint8_t statusCB;
+	  uint8_t cnt;
+	  int32_t dCSum;
+	  uint16_t VolLastTime[CELL_NUM];
+	  uint16_t dVdC[CELL_NUM];
+}CellBalance;
+
+typedef struct{
     uint16_t VolCheckIndex;
 }TOBEDONE;
 
@@ -136,6 +160,7 @@ EXTERN BOXINFO          boxInfo;
 EXTERN BOXBMS           boxBMS;
 EXTERN BATBMS           batBMS[CELL_NUM];
 EXTERN CellResistance   cellR;
+EXTERN CellBalance      cellBalance;
 EXTERN uint32_t         BMSFaultBit;
 
 //EXTERN uint16_t  CalibVolTable[1] = {3150};
@@ -163,10 +188,20 @@ EXTERN void BoxCoulombCount(void);
 EXTERN void BMSCoulombTotalRealTimeUpdate(void);
 EXTERN void BoxSOCUpdate(void);
 
+EXTERN uint32_t BatSOCVolEst_NoCur(uint16_t vol, uint32_t coulombSOC);
+EXTERN uint32_t BatSOCVolEst_LittleCur(uint16_t vol);
+EXTERN uint32_t BatSOCVolEst_LargeCur(uint16_t vol);
+EXTERN void BoxSOCInitEstimate(void);
 EXTERN void SingleBatSOCCal(uint16_t batIndex);
 EXTERN void SingleBatSOCCoulombClear(void);
 EXTERN void SingleBatSOCCoulombFull(void);
 
 EXTERN int16_t abs_value(int16_t error);
+EXTERN uint8_t BiSearch(const uint16_t* arr, uint8_t len, uint16_t vol);
+//Cell Balance
+EXTERN void CellBalanceTask(void);
+
+
+
 #undef EXTERN
 #endif

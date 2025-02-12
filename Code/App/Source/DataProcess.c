@@ -6,6 +6,40 @@ void Driver_I2cInit(void)
     DL_I2C_enablePower(I2C_0_INST);
     SYSCFG_DL_I2C_0_init();
 }
+
+void CellBalanceNormalTask(){
+    //Cell Balance
+		PcPointBuffer[CB_bits] = CellBalanceStatusGet();
+		if(PcPointBuffer[CB_bits]) cellBalance.statusCB |= CB_ON;
+		
+		//CB check forbide bit
+	  if(PcPointBuffer[controlBits] & CB_STATUS_BIT){
+	    cellBalance.statusCB |= CB_FORBIDEN;
+	  }else{
+	    cellBalance.statusCB &= (~CB_FORBIDEN);
+	  }
+		
+	  //turn off
+	  if(cellBalance.statusCB & CB_ON){
+			//forbide or turn off
+	    if((cellBalance.statusCB & CB_FORBIDEN) || (cellBalance.statusCB & CB_TURN_OFF)){
+			  CloseCellBalance();
+		    cellBalance.statusCB &= (~CB_ON);
+			}
+	  }else{
+			//not forbide and turn on
+			if(!(cellBalance.statusCB & CB_FORBIDEN) && (cellBalance.statusCB & CB_TURN_ON)){
+			  OpenCellBalance(&packInfo);
+		    cellBalance.statusCB |= CB_ON;
+			}
+		}
+		//clear action bit
+		cellBalance.statusCB &= (~CB_TURN_ON);
+		cellBalance.statusCB &= (~CB_TURN_OFF);
+
+}
+
+
 void BQDataGet(){
 	  //clear buffer
 	  DL_I2C_flushControllerRXFIFO(I2C_0_INST);
@@ -29,8 +63,9 @@ void BQDataGet(){
 		    PcPointBuffer[ts1 + i] = (uint16_t)(Temperature[i] * 10);//float occupies 4 bytes
 		}
 		//current
-		//BQ769x2_ReadCurrent();
+		BQ769x2_ReadCurrent();
 		//memcpy(&PcPointBuffer[current],&Pack_Current,2);
+    CellBalanceNormalTask();
 }
 
 

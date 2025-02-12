@@ -480,6 +480,12 @@ void BQ769x2_ReadAllTemperatures();
 void CommandSubcommands(uint16_t command);
 void DirectCommands(uint8_t command, uint16_t data, uint8_t type);
 void BQ769x2_SetRegister(uint16_t reg_addr, uint32_t reg_data, uint8_t datalen);
+void NotUsedPin_Initialize(const uint16_t* notUsedPinIndex, uint8_t pinNum);
 void Temperature_Pin_Initialize(const uint16_t *temperatureIndex, uint8_t temperatureNum);
 void VcellMode_Initialize(const uint8_t* cellIndex, uint8_t cellNum);
+//CB
+void CellBalanceInit(BatPackBasicInfo* packInfo);
+uint16_t CellBalanceStatusGet(void);
+void CloseCellBalance(void);
+void OpenCellBalance(BatPackBasicInfo* packInfo);
 #endif /* BQ769X2_PROTOCOL_H_ */

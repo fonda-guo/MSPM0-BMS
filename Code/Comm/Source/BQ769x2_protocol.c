@@ -19,7 +19,7 @@ uint8_t value_PFStatusA;      // Permanent Fail Status Register A
 uint8_t value_PFStatusB;      // Permanent Fail Status Register B
 uint8_t value_PFStatusC;      // Permanent Fail Status Register C
 uint8_t FET_Status;  // FET Status register contents  - Shows states of FETs
-uint16_t CB_ActiveCells;  // Cell Balancing Active Cells
+uint16_t CB_ActiveCells  = 0x00;  // Cell Balancing Active Cells
 
 uint8_t UV_Fault             = 0;  // under-voltage fault state
 uint8_t OV_Fault             = 0;  // over-voltage fault state
@@ -90,13 +90,13 @@ void DirectCommands(uint8_t command, uint16_t data, uint8_t type)
     if (type == R) {                       //Read
         I2C_ReadReg(command, RX_data, 2);  //RX_data is a global variable
         delayMS(2);
-        //delayMS(2);  //success in 100k
+        delayMS(2);  //success in 100k. iImportant to delay 4ms, or register read data may go wrong
     }
     if (type == W) {  //write
         //Control_status, alarm_status, alarm_enable all 2 bytes long
         I2C_WriteReg(command, TX_data, 2);
         delayMS(2);
-        //delayMS(2);
+        delayMS(2);
     }
 }
 
@@ -205,14 +205,7 @@ void BQ769x2_SetRegister(uint16_t reg_addr, uint32_t reg_data, uint8_t datalen)
 //************************************BQ769X2 Functions*********************************
 void BQ769x2_Init(BatPackBasicInfo* packInfo)
 {
-//    uint16_t u16TempValue;
-//    uint8_t u8Count;
-
-//    tBattParamsConfig *pBattParamsCfg;
-
-//    pBattParamsCfg = pGaugeApp->pBattGlobalParamList[0]->pBattParamsCfg;
     // Configures all parameters in device RAM
-
     // Enter CONFIGUPDATE mode (Subcommand 0x0090) - It is required to be in CONFIG_UPDATE mode to program the device RAM settings
     // See TRM for full description of CONFIG_UPDATE mode
     CommandSubcommands(BQ769x2_RESET);
@@ -228,7 +221,8 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     // 'Power Config' - 0x9234 = 0x2D80
     // Setting the DSLP_LDO bit allows the LDOs to remain active when the device goes into Deep Sleep mode
     // Set wake speed bits to 00 for best performance
-    BQ769x2_SetRegister(PowerConfig, 0x2D80, 2);
+    // BQ769x2_SetRegister(PowerConfig, 0x2D80, 2);
+	  BQ769x2_SetRegister(PowerConfig, 0x2D90, 2);
 
     // 'REG0 Config' - set REG0_EN bit to enable pre-regulator
     BQ769x2_SetRegister(REG0Config, 0x01, 1);
@@ -236,14 +230,13 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     // 'REG12 Config' - Enable REG1 with 3.3V output (0x0D for 3.3V, 0x0F for 5V)
     BQ769x2_SetRegister(REG12Config, 0x0D, 1);
 
-    // Set DFETOFF pin to control BOTH CHG and DSG FET - 0x92FB = 0x42 (set to 0x00 to disable)
-    BQ769x2_SetRegister(DFETOFFPinConfig, 0x42, 1);
-
+    //Set 0x00 to those no used pins
+    NotUsedPin_Initialize(packInfo->notUsedPinIndex, NOT_USED_PIN_NUM);
     // Set 4 Pins to measure Cell Temperature
-    Temperature_Pin_Initialize(packInfo->thermistorPinIndex,THERMISTOR_NUM);		
+    Temperature_Pin_Initialize(packInfo->thermistorPinIndex, THERMISTOR_NUM);		
 
     // 'VCell Mode' - Enable 16 cells - 0x9304 = 0x0000; Writing 0x0000 sets the default of 16 cells
-		VcellMode_Initialize(packInfo->cellIndex,CELL_NUM);
+		VcellMode_Initialize(packInfo->cellIndex, CELL_NUM);
 		
     // Enable protections in 'Enabled Protections A' 0x9261 = 0xBC
     // Enables SCD (short-circuit), OCD1 (over-current in discharge), OCC (over-current in charge),
@@ -258,16 +251,8 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     // 'Default Alarm Mask' - 0x..82 Enables the FullScan and ADScan bits, default value = 0xF800
     BQ769x2_SetRegister(DefaultAlarmMask, 0xF882, 2);
 
-    // Set up Cell Balancing Configuration - 0x9335 = 0x03   -  Automated balancing while in Relax or Charge modes
-    // Also see "Cell Balancing with BQ769x2 Battery Monitors" document on ti.com
-    BQ769x2_SetRegister(BalancingConfiguration, 0x03, 1);
-
-    //Set the minimum cell balance voltage in charge - 0x933B = pBattParamsCfg->u16MinFullChgVoltThd_mV-100 mV
-    //BQ769x2_SetRegister(CellBalanceMinCellVCharge,
-    //    pBattParamsCfg->u16MinFullChgVoltThd_mV - 100, 2);
-    //Set the minimum cell balance voltage in rest - 0x933F = pBattParamsCfg->u16MinFullChgVoltThd_mV-100 mV
-    //BQ769x2_SetRegister(CellBalanceMinCellVRelax,
-    //    pBattParamsCfg->u16MinFullChgVoltThd_mV - 100, 2);
+    //Cell Balance Init
+    CellBalanceInit(packInfo);
 
     // Set up CUV (under-voltage) Threshold - 0x9275
     BQ769x2_SetRegister(CUVThreshold, packInfo->CUVvol, 1);
@@ -275,10 +260,10 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
 		BQ769x2_SetRegister(COVThreshold, packInfo->COVvol, 1);
 		
     //Set up current unit
-    BQ769x2_SetRegister(DAConfiguration,0x06,1);
+    //BQ769x2_SetRegister(DAConfiguration,0x06,1);
+		BQ769x2_SetRegister(DAConfiguration,0x07,1);
 		//Set CCGain to calibration current
     BQ769x2_SetRegister(CCGain,0x40F21AD2,4);//7.4768*1.0119
-		
     // Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
     BQ769x2_SetRegister(OCCThreshold, 0x05, 1);
     //BQ769x2_SetRegister(
@@ -286,13 +271,9 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
 
     // Set up OCD1 (over-current in discharge) Threshold - 0x9282 = 0x0A (20 mV = 20A across 1mOhm sense resistor) units of 2mV
     BQ769x2_SetRegister(OCD1Threshold, 0x0A, 1);
-    //BQ769x2_SetRegister(
-    //    OCD1Threshold, pBattParamsCfg->i16MinDhgCurtThd_mA / 2000, 1);
 
     // Set up SCD (short discharge current) Threshold - 0x9286 = 0x05 (100 mV = 100A across 1mOhm sense resistor)  0x05=100mV
     BQ769x2_SetRegister(SCDThreshold, 0x05, 1);
-    //BQ769x2_SetRegister(
-    //    SCDThreshold, pBattParamsCfg->i16MaxChgCurtThd_mA / 2000, 1);
 
     // Set up SCD Delay - 0x9287 = 0x03 (30 us) Enabled with a delay of (value - 1) * 15 �s; min value of 1
     BQ769x2_SetRegister(SCDDelay, 0x03, 1);
@@ -435,7 +416,9 @@ void BQ769x2_ReadPassQ()
 //************************************End of BQ769x2 Measurement Commands******************************************
 //************************************Customer function************************************************************
 void Temperature_Pin_Initialize(const uint16_t *temperaturePinIndex, uint8_t temperatureNum){
-    for(int i = 0; i < temperatureNum; i++){
+    
+	
+	  for(int i = 0; i < temperatureNum; i++){
 		    BQ769x2_SetRegister(temperaturePinIndex[i], 0x07, 1);
 		}
 }
@@ -446,4 +429,43 @@ void VcellMode_Initialize(const uint8_t* cellIndex, uint8_t cellNum){
 		    volmode += (0x1 << ((cellIndex[i] - Cell1Voltage) >> 1));
 		}
 		BQ769x2_SetRegister(VCellMode, volmode, 2);
+}
+
+void NotUsedPin_Initialize(const uint16_t* notUsedPinIndex, uint8_t pinNum){
+	  for(int i = 0; i < pinNum; i++){
+		    BQ769x2_SetRegister(notUsedPinIndex[i], 0x00, 1);
+		}
+}
+
+//************************************Cell Balance************************************************************
+void CellBalanceInit(BatPackBasicInfo* packInfo){
+    //Automated balancing while in Relax or Charge modes, but no host-controlled mode
+    BQ769x2_SetRegister(BalancingConfiguration, packInfo->CB_config, 1);
+	  
+	  BQ769x2_SetRegister(MinCellTemp, packInfo->CB_MinTemp, 1);
+	  BQ769x2_SetRegister(MaxCellTemp, packInfo->CB_MaxTemp, 1);
+	  BQ769x2_SetRegister(MaxInternalTemp, packInfo->CB_MaxIntTemp, 1);
+	  BQ769x2_SetRegister(CellBalanceInterval, packInfo->CB_Interval, 1);
+	  BQ769x2_SetRegister(CellBalanceMaxCells, packInfo->CB_MaxCells, 1);
+	  BQ769x2_SetRegister(CellBalanceMinCellVCharge, packInfo->CB_MinCellVol_Chg, 2);
+	  BQ769x2_SetRegister(CellBalanceMinDeltaCharge, packInfo->CB_MinDelta_Chg, 1);
+	  BQ769x2_SetRegister(CellBalanceStopDeltaCharge, packInfo->CB_StopDelta_Chg, 1);
+	  BQ769x2_SetRegister(CellBalanceMinCellVRelax, packInfo->CB_MinCellVol_Rlx, 2);
+	  BQ769x2_SetRegister(CellBalanceMinDeltaRelax, packInfo->CB_MinDelta_Rlx, 1);
+	  BQ769x2_SetRegister(CellBalanceStopDeltaRelax, packInfo->CB_StopDelta_Rlx, 1);
+}
+//Read from CB_ACTIVE_CELLS
+uint16_t CellBalanceStatusGet(){
+    Subcommands(CB_ACTIVE_CELLS, 0x00, R);
+	  CB_ActiveCells = ((RX_32Byte[1] << 8) + RX_32Byte[0]);  //Bytes 0-1;
+	  return CB_ActiveCells;
+}
+
+//Close cell balance
+void CloseCellBalance(){
+   BQ769x2_SetRegister(BalancingConfiguration, 0x00, 1);
+}
+//Open cell balance
+void OpenCellBalance(BatPackBasicInfo* packInfo){
+   BQ769x2_SetRegister(BalancingConfiguration, packInfo->CB_config, 1);
 }

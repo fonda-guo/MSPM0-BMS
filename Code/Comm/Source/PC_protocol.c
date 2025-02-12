@@ -6,7 +6,7 @@ uint16_t PcPointBuffer[u16_pc_buffer_num] = {0};
 uint8_t TrashCan[8] = {0};
 bool UART_Fault = false;
 
-void DebugRegiter(){
+void DebugRegister(){
     uint32_t *pointer = (uint32_t *)((PcPointBuffer[debug_addr1] << 16) + PcPointBuffer[debug_addr2]);
 	  PcPointBuffer[debug_register1] = *pointer >> 16;
 	  PcPointBuffer[debug_register2] = *pointer & 0xFFFF;
@@ -35,7 +35,7 @@ void PC_ProcessData(){
  			PcPointBuffer[pcpoint] = data;
 			//debug address
 			if(pcpoint == debug_addr1 || pcpoint == debug_addr2){
-			    DebugRegiter();
+			    DebugRegister();
 			}
 			memset((void*)RecBuffer,0,8);
 		}else{
