@@ -67,4 +67,5 @@
   ..\..\test1\ti\driverlib\m0p\dl_interrupt.h \
   ..\..\test1\ti\driverlib\m0p\dl_systick.h \
   ..\..\test1\ti\iqmath\include\IQmathLib.h ..\keil\ti_msp_dl_config.h \
-  ..\Code\BMS\Header\BatConfig.h ..\Code\Comm\Header\I2C_comm.h
+  ..\Code\BMS\Header\BatConfig.h ..\Code\Comm\Header\PC_protocol.h \
+  ..\Code\Comm\Header\UART_comm.h ..\Code\Comm\Header\I2C_comm.h

@@ -43,10 +43,10 @@
 // Constants and macros
 //---------------------------------------------------------------------------
 //basic parameter
-#define MAX_BAT_CAP          118800000  //330Ah 330*10*3600*10(*100ms)
-#define NOMINAL_BAT_CAP      108000000  //300Ah 300*10*3600*10(*100ms)
-#define BAT_CAP_NINTY_PER    97200000   //NOMINAL_BAT_CAP*0.9
-#define BAT_CAP_QUARTER      27000000   //NOMINAL_BAT_CAP*0.25
+#define MAX_BAT_CAP          126000000  //350Ah 350*10*3600*10(*100ms)
+#define NOMINAL_BAT_CAP      118800000  //330Ah 330*10*3600*10(*100ms)
+#define BAT_CAP_NINTY_PER    106920000  //NOMINAL_BAT_CAP*0.9
+#define BAT_CAP_QUARTER      29700000   //NOMINAL_BAT_CAP*0.25
 	
 #define MAX_SOC              10000      //100*100
 #define MAX_SOH              10000      //100*100
@@ -73,9 +73,23 @@
 
 //current
 #define NO_CURRENT_THRESHOLD     5
+#define NO_CUR_STATUS            0
+#define CHG_STATUS               1
+#define DCHG_STATUS              2
+#define TEN_TIMES_06C            1884
+#define TEN_TIMES_05C            1570
+#define TEN_TIMES_03C            942
+#define TEN_TIMES_01C            314
+#define TEN_TIMES_10A            100
+#define DEFAULT_R                3        //0.3m omiga
 
+//calibration
+#define CALI_K_WITHOUT_CALI      10
+#define CALI_K_EDGE_SLOW_DOWN    1
+#define CALI_BOX_MAX_STEP        216000
+#define CALI_BOX_SHOW_MAX_STEP   10
 
-//status define macro
+//software status define macro
 #define START_UP_PROCESS           0x0001
 #define REACH_BAT_LOWER_BOUND      0x0002
 #define REACH_BAT_UPPER_BOUND      0x0004
@@ -103,8 +117,8 @@ typedef struct{
     uint16_t MaxBatVol;
     uint16_t MinBatVol;
 
-    uint16_t MaxBatTemp;
-    uint16_t MinBatTemp;
+    int16_t  MaxBatTemp;
+    int16_t  MinBatTemp;
 
     uint32_t MaxBatSOC;
     uint32_t MinBatSOC;
@@ -115,9 +129,10 @@ typedef struct{
 
 typedef struct{
     uint16_t status;
-    uint16_t temperature;           //10-70
+    int16_t  temperature;           //t * 10
     uint16_t BoxSOCShow;            //0~10000 stands for 0~1
     uint16_t BoxSOHShow;            //0~10000 stands for 0~1
+	  uint16_t BatSOCCaliStatus;      //bit represent specific bat cali is on/off
     uint32_t BoxCoulombCounter;     //0 ~ MAX_BAT_CAP
     uint32_t BoxCoulombTotal;       //0 ~ MAX_BAT_CAP
     uint32_t BoxSOCCal;             //0 ~ MAX_BAT_CAP
@@ -125,11 +140,10 @@ typedef struct{
 }BOXBMS;
 
 typedef struct{
-	  uint8_t  BatSOCCaliStatus;       //whether Bat SOC is under calibration
     uint16_t BatVol;
-    uint16_t BatTemp;
-    uint32_t BatCoulombSOC;          //0 ~ MAX_BAT_CAP
-	  uint32_t BatSOCCal;
+    int16_t  BatTemp;
+    //uint32_t BatCoulombSOC;          //0 ~ MAX_BAT_CAP
+	  uint32_t BatSOCCal;              //0 ~ MAX_BAT_CAP
 }BATBMS;
 
 typedef struct{
@@ -150,8 +164,9 @@ typedef struct{
 }CellBalance;
 
 typedef struct{
-    uint16_t VolCheckIndex;
-}TOBEDONE;
+    uint8_t status;
+	  uint8_t hysteresisStatus;
+}ChgDchgStatus;
 
 //---------------------------------------------------------------------------
 // Public variables
@@ -162,9 +177,8 @@ EXTERN BATBMS           batBMS[CELL_NUM];
 EXTERN CellResistance   cellR;
 EXTERN CellBalance      cellBalance;
 EXTERN uint32_t         BMSFaultBit;
+EXTERN ChgDchgStatus    chgdchgStatus;
 
-//EXTERN uint16_t  CalibVolTable[1] = {3150};
-//EXTERN uint16_t  CaliSOCTable[1]  = {1200};
 //---------------------------------------------------------------------------
 // Public functions prototypes
 //---------------------------------------------------------------------------
@@ -183,25 +197,33 @@ EXTERN uint32_t BatSOCVolInitEstimate(uint16_t vol, uint16_t temperature, uint32
 EXTERN void DataCheck(void);
 EXTERN void ResistanceCal(int16_t Current);
 EXTERN void TemperatureCali(void);
-EXTERN void SingleBatSOCupdate(void);
+EXTERN void SingleBatSOCupdate(int16_t I);
 EXTERN void BoxCoulombCount(void);
 EXTERN void BMSCoulombTotalRealTimeUpdate(void);
-EXTERN void BoxSOCUpdate(void);
+EXTERN void BoxSOCShowUpdate(void);
 
 EXTERN uint32_t BatSOCVolEst_NoCur(uint16_t vol, uint32_t coulombSOC);
 EXTERN uint32_t BatSOCVolEst_LittleCur(uint16_t vol);
 EXTERN uint32_t BatSOCVolEst_LargeCur(uint16_t vol);
 EXTERN void BoxSOCInitEstimate(void);
-EXTERN void SingleBatSOCCal(uint16_t batIndex);
+EXTERN void SingleBatSOCCalVolCali(uint8_t batIndex, int16_t I);
 EXTERN void SingleBatSOCCoulombClear(void);
 EXTERN void SingleBatSOCCoulombFull(void);
 
 EXTERN int16_t abs_value(int16_t error);
 EXTERN uint8_t BiSearch(const uint16_t* arr, uint8_t len, uint16_t vol);
+EXTERN uint16_t VolInterpolation(uint16_t RefLvalue, uint16_t RefRvalue, uint16_t RefValue, uint16_t Lvol, uint16_t Rvol);
 //Cell Balance
 EXTERN void CellBalanceTask(void);
 
-
-
+//Voltage calibration
+EXTERN bool checkVolCaliConditon(uint8_t batIndex, int16_t I);
+EXTERN bool checkSOCEdgeSlowDownConditon(uint8_t batIndex, uint16_t* Vol_tbl_now, int16_t I);
+EXTERN void InterpolVolBasedOnCur(uint16_t* resultTbl, uint8_t tempIndex, int16_t I);
+EXTERN uint16_t CaliK(uint8_t batIndex, uint16_t* Vol_tbl_now,int16_t I);
+EXTERN uint16_t CaliKChooseBasedOnSOC(uint8_t batIndex, uint8_t volIndex, int16_t I);
+EXTERN void CaliVolRangeCalculate(uint8_t batIndex, uint8_t volIndex, uint8_t* delt_Vol, int16_t I);
+EXTERN void SingleBatSOCCalVolCaliCal(uint8_t batIndex, uint16_t k_cali);
+EXTERN void BoxSOCCalVolCaliCal(void);
 #undef EXTERN
 #endif

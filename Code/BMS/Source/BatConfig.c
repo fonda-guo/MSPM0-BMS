@@ -4,7 +4,7 @@
 //no cur
 const uint16_t NoCur_VolTable[17] = {2850, 3113, 3218, 3234, 3261, 3279, 3292, 3302, 3303, 3304, 3306, 3308, 3332, 3338, 3340, 3350, 3400};
 const uint8_t NoCur_SOCRange[17] = {0, 5, 10, 15, 20, 25, 30, 40, 45, 50, 55, 60, 65, 70, 85, 95, 100};
-const uint8_t NoCur_SOCErrRange[17] = {10, 10, 10, 10, 10, 10, 15, 10, 10, 10, 10, 10, 10, 15, 20, 10, 10};
+const uint8_t NoCur_SOCErrRange[17] = {10, 10, 10, 10, 10, 10, 15, 10, 10, 10, 10, 10, 10, 15, 20, 10, 5};
 
 //little cur
 
@@ -13,14 +13,24 @@ const uint8_t NoCur_SOCErrRange[17] = {10, 10, 10, 10, 10, 10, 15, 10, 10, 10, 1
 //---------------------------------------------------------------------------
 //SOC Calibration Data	
 //---------------------------------------------------------------------------	
-const uint8_t Cali_T_tbl[CALI_T_NUM] = {0, 15, 25, 35, 45};
+const uint16_t Cali_T_tbl[CALI_T_NUM] = {0, 150, 250, 350, 450};  // temperature * 10
 
 //SOC*100
+//soc tbl
 const uint16_t Cali_chg_SOC_tbl[CALI_POINT_NUM]  = {500, 2000, 6000, 9700};
 const uint16_t Cali_dchg_SOC_tbl[CALI_POINT_NUM] = {500, 2000, 6500, 9900};
+//soc error tbl
+//const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {100, 300, 700, 150};
+//const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {100, 300, 700, 100};
+//test
+const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {10, 10, 10, 10};
+const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {10, 10, 10, 10};
+//k tbl * 10
+const uint16_t Cali_K_dchg_Higher_SOC[CALI_POINT_NUM]  = {200, 50, 30, 15};
+const uint16_t Cali_K_dchg_Lower_SOC[CALI_POINT_NUM]   = {1, 3, 5, 8};
 
-const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {100, 300, 700, 150};
-const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {100, 300, 700, 100};
+const uint16_t Cali_K_chg_Higher_SOC[CALI_POINT_NUM]  = {8, 5, 3, 1};
+const uint16_t Cali_K_chg_Lower_SOC[CALI_POINT_NUM]   = {15, 30, 50, 200};
 
 //Temperature 0 Celsius
 const uint16_t Cali_T0_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3390, 3439, 3447, 3541}, {3351, 3402, 3425, 3531}, {3287, 3353, 3389, 3495},  //chg  0.5C  0.3C  0.1C
@@ -47,10 +57,11 @@ const uint16_t (*Cali_T_Vol_tbl[CALI_T_NUM])[CALI_POINT_NUM]	 = {Cali_T0_vol_tbl
 																															 
 //---------------------------------------------------------------------------	
 BatPackBasicInfo packInfo = {
-    .cellIndex = {Cell1Voltage, Cell2Voltage, Cell3Voltage, Cell4Voltage, Cell5Voltage, Cell6Voltage, Cell15Voltage, Cell16Voltage},
-		.thermistorPinIndex = {ALERTPinConfig, CFETOFFPinConfig, TS3Config, HDQPinConfig},
-		.notUsedPinIndex = {TS1Config, TS2Config, DFETOFFPinConfig, DCHGPinConfig, DDSGPinConfig},
+    .cellIndex             = {Cell1Voltage, Cell2Voltage, Cell3Voltage, Cell4Voltage, Cell5Voltage, Cell6Voltage, Cell15Voltage, Cell16Voltage},
+		.thermistorPinIndex    = {ALERTPinConfig, CFETOFFPinConfig, TS3Config, HDQPinConfig},
+		.notUsedPinIndex       = {TS1Config, TS2Config, DFETOFFPinConfig, DCHGPinConfig, DDSGPinConfig},
 		.thermistorReadCommond = {CFETOFFTemperature, ALERTTemperature, TS3Temperature, HDQTemperature},
+		.Tmap_ther2bat         = {ts1,ts1,ts2,ts2,ts3,ts3,ts4,ts4},
 		.CUVvol = 0x31,//2479 mV CUV Threshold is this value multiplied by 50.6mV
 		.COVvol = 0x4B,//3800 mV COV Threshold is this value multiplied by 50.6mV;
 		

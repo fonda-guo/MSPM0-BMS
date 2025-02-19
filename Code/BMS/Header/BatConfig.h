@@ -3,6 +3,7 @@
 //This file is to contain some basic bat configuration
 //To simplify and standardlize some process
 #include <stdint.h>
+#include "PC_protocol.h"
 
 #define  CELL_NUM         (8)
 #define  THERMISTOR_NUM   (4)
@@ -14,12 +15,13 @@
 
 typedef const struct {
 	//Basic
-	uint8_t cellIndex[CELL_NUM];
+	uint8_t  cellIndex[CELL_NUM];
 	uint16_t thermistorPinIndex[THERMISTOR_NUM];
 	uint16_t notUsedPinIndex[NOT_USED_PIN_NUM];
-	uint8_t thermistorReadCommond[THERMISTOR_NUM];
-	uint8_t CUVvol;
-	uint8_t COVvol;
+	uint8_t  thermistorReadCommond[THERMISTOR_NUM];
+	PC_point Tmap_ther2bat[CELL_NUM]; 
+	uint8_t  CUVvol;
+	uint8_t  COVvol;
 	//CB
 	uint8_t  CB_config;
 	int8_t   CB_MinTemp;
@@ -53,4 +55,14 @@ typedef struct {
 
 extern NoCurVolTable      nocur_voltbl;
 extern BatPackBasicInfo   packInfo;
+extern const uint16_t Cali_T_tbl[CALI_T_NUM];
+extern const uint16_t (*Cali_T_Vol_tbl[CALI_T_NUM])[CALI_POINT_NUM];
+extern const uint16_t Cali_chg_SOC_tbl[CALI_POINT_NUM];
+extern const uint16_t Cali_dchg_SOC_tbl[CALI_POINT_NUM];
+extern const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM];
+extern const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM];
+extern const uint16_t Cali_K_dchg_Higher_SOC[CALI_POINT_NUM];
+extern const uint16_t Cali_K_chg_Higher_SOC[CALI_POINT_NUM];
+extern const uint16_t Cali_K_dchg_Lower_SOC[CALI_POINT_NUM];
+extern const uint16_t Cali_K_chg_Lower_SOC[CALI_POINT_NUM];
 #endif

@@ -87,6 +87,8 @@ void BMSInit(void){
     memset(&cellBalance,0,sizeof(cellBalance));
 		cellBalance.statusCB = CB_ON;
 	
+	  memset(&chgdchgStatus,0,sizeof(chgdchgStatus));
+		
     dC = 0;
 }
 /***************************************************************************************/
@@ -134,11 +136,11 @@ void BMSStartUp(void){
     uint16_t index = 0;
     for(index = 0; index < CELL_NUM; index++){
         batBMS[index].BatVol   = PcPointBuffer[cell1Vol + index];
-        batBMS[index].BatTemp  = PcPointBuffer[ts1 + index/2]; //ts1-> cell1,2;ts2->cell3,4
+        batBMS[index].BatTemp  = PcPointBuffer[packInfo.Tmap_ther2bat[index]]; //ts1-> cell1,2;ts2->cell3,4
 			  Read32Flash(&SingleBatSOCEEReadBuffer[index], E2_SINGLE_BAT_SOC_ADDR + index*8);
-        batBMS[index].BatCoulombSOC = BatSOCVolInitEstimate(batBMS[index].BatVol,batBMS[index].BatTemp,SingleBatSOCEEReadBuffer[index]);
-			  boxInfo.MaxBatSOC = (boxInfo.MaxBatSOC > batBMS[index].BatCoulombSOC) ? boxInfo.MaxBatSOC : batBMS[index].BatCoulombSOC;
-			  boxInfo.MinBatSOC = (boxInfo.MinBatSOC < batBMS[index].BatCoulombSOC) ? boxInfo.MinBatSOC : batBMS[index].BatCoulombSOC;
+        batBMS[index].BatSOCCal = BatSOCVolInitEstimate(batBMS[index].BatVol,batBMS[index].BatTemp,SingleBatSOCEEReadBuffer[index]);
+			  boxInfo.MaxBatSOC = (boxInfo.MaxBatSOC > batBMS[index].BatSOCCal) ? boxInfo.MaxBatSOC : batBMS[index].BatSOCCal;
+			  boxInfo.MinBatSOC = (boxInfo.MinBatSOC < batBMS[index].BatSOCCal) ? boxInfo.MinBatSOC : batBMS[index].BatSOCCal;
     }
 		
     //BOX E2 Initial
@@ -164,10 +166,20 @@ void BMSStartUp(void){
 /***************************************************************************************/
 void BMSBasicDataGet(void){
     uint16_t index = 0;
+	  boxInfo.MaxBatTemp = -2000;
+	  boxInfo.MinBatTemp =  2000;
+	  boxInfo.MaxBatSOC = 0;
+		boxInfo.MinBatSOC = boxInfo.SingleBatCoulombTotal;
     for(index = 0; index < CELL_NUM; index++){
         batBMS[index].BatVol   = PcPointBuffer[cell1Vol + index];
-        batBMS[index].BatTemp  = PcPointBuffer[ts1 + index/2];
+        batBMS[index].BatTemp  = PcPointBuffer[packInfo.Tmap_ther2bat[index]];
         
+			  boxInfo.MaxBatTemp = (boxInfo.MaxBatTemp > batBMS[index].BatTemp) ? boxInfo.MaxBatTemp : batBMS[index].BatTemp;
+	      boxInfo.MinBatTemp = (boxInfo.MinBatTemp < batBMS[index].BatTemp) ? boxInfo.MinBatTemp : batBMS[index].BatTemp;
+			
+			  boxInfo.MaxBatSOC = (boxInfo.MaxBatSOC > batBMS[index].BatSOCCal) ? boxInfo.MaxBatSOC : batBMS[index].BatSOCCal;
+			  boxInfo.MinBatSOC = (boxInfo.MinBatSOC < batBMS[index].BatSOCCal) ? boxInfo.MinBatSOC : batBMS[index].BatSOCCal;
+			  			 
         boxInfo.MaxBatVol = PcPointBuffer[maxcellvol];
         boxInfo.MinBatVol = PcPointBuffer[mincellvol];
 
@@ -186,7 +198,15 @@ void BMSBasicDataGet(void){
 /***************************************************************************************/
 void BMSCalTask(void){
     int16_t I = PcPointBuffer[current];//uint16->int16 10 times
-
+    
+	  if(I <= NO_CURRENT_THRESHOLD && I >= -NO_CURRENT_THRESHOLD){
+		    chgdchgStatus.status = NO_CUR_STATUS;
+		}else if(I < 0){
+		    chgdchgStatus.status = DCHG_STATUS;
+		}else{
+		    chgdchgStatus.status = CHG_STATUS;
+		}
+		
     //every 500ms
     //I = (int16_t)((float)I / 25 * 10);//25 is the shunt ratio,10 times of current
 	
@@ -197,19 +217,20 @@ void BMSCalTask(void){
 	  ResistanceCal(I);
 
     TemperatureCali();
-
-    //VolCali();
-
-    SingleBatSOCupdate();
-
+		
+    //pure counter
     BoxCoulombCount();
 	
 	  BMSCoulombTotalRealTimeUpdate();
+		
+		SingleBatSOCupdate(I);
+		
+		BoxSOCCalVolCaliCal();
 
-    BoxSOCUpdate();
+    BoxSOCShowUpdate();
 		
 		CellBalanceTask();
-	  
+		
 }
 /***************************************************************************************/
 /*
@@ -254,6 +275,7 @@ void BMSCoulombTotalFinalUpdate(void){
 	  if((boxBMS.status & REACH_BAT_LOWER_BOUND) != 0){
 			  boxBMS.BoxCoulombCounterCali -= boxBMS.BoxCoulombCounter;
         boxBMS.BoxCoulombCounter = 0;
+			  boxBMS.BoxSOCCal = 0;
         SingleBatSOCCoulombClear();
 			  boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
         boxInfo.SingleBatCoulombTotal = boxBMS.BoxCoulombTotal;//to be done
@@ -381,57 +403,19 @@ void TemperatureCali(void){
 }
 /***************************************************************************************/
 /*
- * Function              
- * @param[in]            none
+ * Function              SingleBatSOCupdate
+ * @param[in]            I(current A*10)
  * @return               none
  * \brief                
  *///
 /***************************************************************************************/
-void SingleBatSOCupdate(void){
-    uint16_t batIndex = 0;
+void SingleBatSOCupdate(int16_t I){
+    uint8_t batIndex = 0;
     //clear buffer
     memset(SingleBatSOCEEWriteBuffer, 0, sizeof(SingleBatSOCEEWriteBuffer));
     for(batIndex = 0; batIndex < CELL_NUM; batIndex++){
-        SingleBatSOCCal(batIndex);
+        SingleBatSOCCalVolCali(batIndex, I);
     }
-    return;
-}
-/***************************************************************************************/
-/*
- * Function              
- * @param[in]            none
- * @return               none
- * \brief                
- *///
-/***************************************************************************************/
-void SingleBatSOCCal(uint16_t batIndex){
-    if(dC > 0){
-        //Discahrge
-        if(batBMS[batIndex].BatCoulombSOC > dC){
-            batBMS[batIndex].BatCoulombSOC -= dC;
-        }else{
-            //Still remain, single bat needs no calibration
-            batBMS[batIndex].BatCoulombSOC = 0;
-        }
-    }else{
-        //Charge
-        if(batBMS[batIndex].BatCoulombSOC < (boxInfo.SingleBatCoulombTotal + dC)){
-            batBMS[batIndex].BatCoulombSOC -= dC;
-        }else{
-            //Still space left
-            batBMS[batIndex].BatCoulombSOC = boxInfo.SingleBatCoulombTotal;
-        }
-    }
-
-    if(boxInfo.SingleBatCoulombTotal == 0){
-        PcPointBuffer[BatCommPoint[batIndex]] = 1234;
-    }else{
-        PcPointBuffer[BatCommPoint[batIndex]] = (uint16_t)(((float)batBMS[batIndex].BatCoulombSOC/boxInfo.SingleBatCoulombTotal) * 10000);
-    }
-    
-    SingleBatSOCEEWriteBuffer[batIndex]  = batBMS[batIndex].BatCoulombSOC;
-    SingleBatTempEEWriteBuffer[batIndex] = batBMS[batIndex].BatTemp;
-    
     return;
 }
 
@@ -472,15 +456,30 @@ void BoxCoulombCount(void){
 
 /***************************************************************************************/
 /*
- * Function              
+ * Function              BoxSOCShowUpdate
  * @param[in]            none
  * @return               none
- * \brief                
+ * \brief                smooth box soc change
  *///
 /***************************************************************************************/
-void BoxSOCUpdate(void){
-    boxBMS.BoxSOCCal = boxBMS.BoxCoulombCounter;
-	  BoxSOCEEBuffer = boxBMS.BoxSOCCal;
+void BoxSOCShowUpdate(void){
+	   uint16_t BoxSOC   = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 10000);
+	   int16_t  SOCerror = BoxSOC - boxBMS.BoxSOCShow;
+	   if(abs_value(SOCerror) <= CALI_BOX_SHOW_MAX_STEP){
+		   boxBMS.BoxSOCShow = BoxSOC;
+		 }else{
+		   if(BoxSOC > boxBMS.BoxSOCShow){
+				 boxBMS.BoxSOCShow += CALI_BOX_SHOW_MAX_STEP;
+			 }else{
+				 if(boxBMS.BoxSOCShow >= CALI_BOX_SHOW_MAX_STEP){
+				   boxBMS.BoxSOCShow -= CALI_BOX_SHOW_MAX_STEP;
+				 }else{
+				   boxBMS.BoxSOCShow = 0;
+				 }   
+			 }
+		 }
+		 boxBMS.BoxSOCShow = (boxBMS.BoxSOCShow > MAX_SOC) ? MAX_SOC : boxBMS.BoxSOCShow;
+		 PcPointBuffer[SOC_box_show] = boxBMS.BoxSOCShow;
 }
 /***************************************************************************************/
 /*
@@ -507,16 +506,16 @@ void BMSCoulombTotalRealTimeUpdate(void){
 
 //used for now, a more accurate calibration method is needed later 
 void SingleBatSOCCoulombClear(void){
-    uint16_t batIndex = 0;
+    uint8_t batIndex = 0;
     for(batIndex = 0; batIndex < CELL_NUM; batIndex++){
-        batBMS[batIndex].BatCoulombSOC = 0;
+        batBMS[batIndex].BatSOCCal = 0;
     }
 }
 //used for now, a more accurate calibration method is needed later 
 void SingleBatSOCCoulombFull(void){
-    uint16_t batIndex = 0;
+    uint8_t batIndex = 0;
     for(batIndex = 0; batIndex < CELL_NUM; batIndex++){
-        batBMS[batIndex].BatCoulombSOC = boxInfo.SingleBatCoulombTotal;
+        batBMS[batIndex].BatSOCCal = boxInfo.SingleBatCoulombTotal;
     }
 }
 
@@ -575,12 +574,20 @@ void BoxSOCInitEstimate(void){
     uint16_t BoxSOC    = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 100);
     if(BoxSOC <= MaxBatSOC && BoxSOC >= MinBatSOC){
 			  boxBMS.BoxCoulombCounter = boxBMS.BoxSOCCal;
+			  boxBMS.BoxSOCShow = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 10000);
 			  return;
 		}
     uint16_t d = MaxBatSOC - MinBatSOC;
+		if(d == 100){
+		  boxBMS.BoxSOCCal = 0;
+			boxBMS.BoxCoulombCounter = 0;
+			boxBMS.BoxSOCShow = 0;
+			return;
+		}
 		BoxSOC = MinBatSOC + MinBatSOC * (float)d /(100 - d);
     boxBMS.BoxSOCCal = (uint32_t)((float)boxBMS.BoxCoulombTotal / 100 * BoxSOC);
 		boxBMS.BoxCoulombCounter = boxBMS.BoxSOCCal;
+		boxBMS.BoxSOCShow = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 10000);
 		return;
 }
 /***************************************************************************************/
@@ -653,6 +660,7 @@ void CellBalanceTask(void){
 }
 
 uint8_t BiSearch(const uint16_t* arr, uint8_t len, uint16_t value){
+	  if(value < arr[0]) return 0;
 	  uint8_t low = 0;
 	  uint8_t high = len - 1;
 	  uint8_t mid = 0;
@@ -666,10 +674,387 @@ uint8_t BiSearch(const uint16_t* arr, uint8_t len, uint16_t value){
 		}
     return high;
 }
+// default R > L
+uint16_t VolInterpolation(uint16_t RefLvalue, uint16_t RefRvalue, uint16_t RefValue, uint16_t Lvol, uint16_t Rvol){
+    if(RefLvalue == RefRvalue || Lvol == Rvol) return Lvol;
+	  return ((int16_t)(Rvol - Lvol)*(RefValue - RefLvalue)/(RefRvalue - RefLvalue)) + Lvol;
+}
 /***************************************************************************************/
 /*Calibration PART
  *///
 /***************************************************************************************/
-void VolCali(void){
 
+
+/***************************************************************************************/
+/*
+ * Function              SingleBatSOCCalVolCali
+ * @param[in]            none
+ * @return               none
+ * \brief         
+ *///
+/***************************************************************************************/
+void SingleBatSOCCalVolCali(uint8_t batIndex, int16_t I){
+    uint16_t k_cali = CALI_K_WITHOUT_CALI;
+    if(checkVolCaliConditon(batIndex,I)){
+		//calibrate is enable			  
+			  uint16_t Vol_tbl_now[CALI_POINT_NUM] = {0};
+				uint16_t Vol_tbl_LTemp[CALI_POINT_NUM] = {0};
+				uint16_t Vol_tbl_RTemp[CALI_POINT_NUM] = {0};
+				
+		    uint8_t Temp_left_index = BiSearch(Cali_T_tbl, CALI_T_NUM, batBMS[batIndex].BatTemp);
+				//get vol table
+				if(Temp_left_index == CALI_T_NUM - 1){
+				    InterpolVolBasedOnCur(Vol_tbl_now, Temp_left_index, I);
+				}else{
+					  //get nearest 2 temperature vol tables
+				    InterpolVolBasedOnCur(Vol_tbl_LTemp, Temp_left_index, I);
+					  InterpolVolBasedOnCur(Vol_tbl_RTemp, Temp_left_index + 1, I);
+					  for(int i = 0; i < CALI_POINT_NUM; i++){
+						    Vol_tbl_now[i] = VolInterpolation(Cali_T_tbl[Temp_left_index], Cali_T_tbl[Temp_left_index+1], batBMS[batIndex].BatTemp, Vol_tbl_LTemp[i], Vol_tbl_RTemp[i]);
+						}
+				}
+				k_cali = CaliK(batIndex, Vol_tbl_now, I);
+				//maybe dont calibrate logic will be added in k_cali later
+				if(k_cali != CALI_K_WITHOUT_CALI) boxBMS.BatSOCCaliStatus |= (1 << batIndex);
+		}else{
+		//do not calibrate
+			  boxBMS.BatSOCCaliStatus &= (~(1 << batIndex));
+			  k_cali = CALI_K_WITHOUT_CALI;
+		}
+		SingleBatSOCCalVolCaliCal(batIndex, k_cali);
+    return;
+}
+/***************************************************************************************/
+/*
+ * Function              SingleBatSOCCalVolCaliCal
+ * @param[in]            battery index, k_cali
+ * @return               void
+ * \brief                
+ *///
+/***************************************************************************************/
+void SingleBatSOCCalVolCaliCal(uint8_t batIndex, uint16_t k_cali){
+	int32_t cali_dC = (int32_t)((float)k_cali * dC / 10);
+  if(cali_dC > 0){
+        //Discahrge
+        if(batBMS[batIndex].BatSOCCal > cali_dC){
+            batBMS[batIndex].BatSOCCal -= cali_dC;
+        }else{
+            //Still remain, single bat needs no calibration
+            batBMS[batIndex].BatSOCCal = 0;
+        }
+    }else{
+        //Charge
+        if(batBMS[batIndex].BatSOCCal < (boxInfo.SingleBatCoulombTotal + cali_dC)){
+            batBMS[batIndex].BatSOCCal -= cali_dC;
+        }else{
+            //Still space left
+            batBMS[batIndex].BatSOCCal = boxInfo.SingleBatCoulombTotal;
+        }
+    }
+
+    if(boxInfo.SingleBatCoulombTotal == 0){
+        PcPointBuffer[BatCommPoint[batIndex]] = 1234;
+    }else{
+        PcPointBuffer[BatCommPoint[batIndex]] = (uint16_t)(((float)batBMS[batIndex].BatSOCCal/boxInfo.SingleBatCoulombTotal) * 10000);
+    }
+    
+    SingleBatSOCEEWriteBuffer[batIndex]  = batBMS[batIndex].BatSOCCal;
+    SingleBatTempEEWriteBuffer[batIndex] = batBMS[batIndex].BatTemp;
+}
+/***************************************************************************************/
+/*
+ * Function              BoxSOCCalVolCaliCal
+ * @param[in]            void
+ * @return               void
+ * \brief                
+ *///
+/***************************************************************************************/
+void BoxSOCCalVolCaliCal(void){
+	  int32_t  dCali = 0;
+	  PcPointBuffer[Cali_bits] = boxBMS.BatSOCCaliStatus;
+	  if(boxBMS.BatSOCCaliStatus == 0){
+			//do not cali
+		  dCali = 0;
+		}else{
+	    uint16_t MaxBatSOC = (uint16_t)(((float)boxInfo.MaxBatSOC/boxInfo.SingleBatCoulombTotal) * 10000);
+	    uint16_t MinBatSOC = (uint16_t)(((float)boxInfo.MinBatSOC/boxInfo.SingleBatCoulombTotal) * 10000);
+      uint16_t BoxSOC    = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 10000);
+			uint16_t BoxSOCBasedOnBat = 0;
+      uint16_t d = MaxBatSOC - MinBatSOC;
+		  if(d == 10000){
+			  BoxSOC = 0;
+		  }else{
+		    BoxSOCBasedOnBat = MinBatSOC + MinBatSOC * (float)d /(10000 - d);
+		  }
+			if(BoxSOC > BoxSOCBasedOnBat){
+				if(dC > 0){
+				//Discahrge
+					int32_t dSOCCoulomb = (BoxSOC - BoxSOCBasedOnBat) * (boxInfo.SingleBatCoulombTotal / 10000);
+					dCali = (CALI_BOX_MAX_STEP > dSOCCoulomb) ? dSOCCoulomb : CALI_BOX_MAX_STEP;
+				}else{
+				//Charge
+					dCali = -0.7 * dC; //charge less (different sign)
+				}
+			}else{
+			  if(dC > 0){
+				//Discahrge
+					dCali = -0.7 * dC; //discharge less (different sign)
+				}else{
+				//Charge
+					int32_t dSOCCoulomb = (BoxSOC - BoxSOCBasedOnBat) * (boxInfo.SingleBatCoulombTotal / 10000);
+					dCali = (-CALI_BOX_MAX_STEP < dSOCCoulomb) ? dSOCCoulomb : -CALI_BOX_MAX_STEP;					
+				}
+			}
+			boxBMS.BatSOCCaliStatus = 0;
+		}
+		
+			
+    if(dC > 0){
+            //Discahrge
+            if(boxBMS.BoxSOCCal > (dC + dCali)){
+                boxBMS.BoxSOCCal = boxBMS.BoxSOCCal - dC - dCali;
+            }else{
+                //Still remain 
+                boxBMS.BoxSOCCal = 0;
+            }
+    }else{
+            //Charge
+            if(boxBMS.BoxSOCCal < (boxBMS.BoxCoulombTotal + dC + dCali)){
+                boxBMS.BoxSOCCal = boxBMS.BoxSOCCal - dC - dCali;
+            }else{
+                //Still space left
+                boxBMS.BoxSOCCal = boxBMS.BoxCoulombTotal;
+            }
+    }
+    if(boxBMS.BoxCoulombTotal == 0){
+		    PcPointBuffer[SOC_box_cal] = 1234;
+    }else{
+        PcPointBuffer[SOC_box_cal] = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 10000);
+    }
+}
+/***************************************************************************************/
+/*
+ * Function              checkVolCaliConditon
+ * @param[in]            battery index, current
+ * @return               cali or not
+ * \brief                to be done
+ *///
+/***************************************************************************************/
+bool checkVolCaliConditon(uint8_t batIndex, int16_t I){
+	  //T
+    if(batBMS[batIndex].BatTemp > 500 || batBMS[batIndex].BatTemp < 0) return false;
+	  //I
+	  if(I >= 0){
+		    if(I > TEN_TIMES_06C || I < TEN_TIMES_10A){
+				    return false;
+				}
+		}else{
+		   if(I < -TEN_TIMES_06C || I > -TEN_TIMES_10A){
+				    return false;
+				}
+		} 
+	  return true;
+}
+/***************************************************************************************/
+/*
+ * Function              InterpolVolBasedOnCur
+ * @param[in]            Result array, Temperature table index, current
+ * @return               a vol table
+ * \brief                now it is done by interpolate the nearest two voltages under different current
+ *                       The data scale is small now, so if-else is a good choice, maybe bisearch is more suitable later 
+ *///
+/***************************************************************************************/
+void InterpolVolBasedOnCur(uint16_t* resultTbl, uint8_t tempIndex, int16_t I){
+    if(I > 0){
+			//charge
+			if(I > TEN_TIMES_05C){
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = Cali_T_Vol_tbl[tempIndex][0][i] + (uint16_t)((float)(I - TEN_TIMES_05C) * DEFAULT_R / 100);
+					}
+			}else if(I < TEN_TIMES_01C){
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = Cali_T_Vol_tbl[tempIndex][2][i] - (uint16_t)((float)(TEN_TIMES_01C - I) * DEFAULT_R / 100);
+					}
+			}else if(I > TEN_TIMES_03C){
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = VolInterpolation(TEN_TIMES_03C,TEN_TIMES_05C,I,Cali_T_Vol_tbl[tempIndex][1][i],Cali_T_Vol_tbl[tempIndex][0][i]);
+					}
+			}else{
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = VolInterpolation(TEN_TIMES_01C,TEN_TIMES_03C,I,Cali_T_Vol_tbl[tempIndex][2][i],Cali_T_Vol_tbl[tempIndex][1][i]);
+					}
+			} 
+		
+		}else{
+			uint16_t absI = abs_value(I);
+		  if(absI > TEN_TIMES_05C){
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = Cali_T_Vol_tbl[tempIndex][5][i] - (uint16_t)((float)(absI - TEN_TIMES_05C) * DEFAULT_R / 100);
+					}
+			}else if(absI < TEN_TIMES_01C){
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = Cali_T_Vol_tbl[tempIndex][3][i] + (uint16_t)((float)(TEN_TIMES_01C - absI) * DEFAULT_R / 100);
+					}
+			}else if(absI > TEN_TIMES_03C){
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = VolInterpolation(TEN_TIMES_03C, TEN_TIMES_05C, absI, Cali_T_Vol_tbl[tempIndex][4][i], Cali_T_Vol_tbl[tempIndex][5][i]);
+					}
+			}else{
+			    for(int i = 0; i < CALI_POINT_NUM; i++){
+					    resultTbl[i] = VolInterpolation(TEN_TIMES_01C, TEN_TIMES_03C, absI, Cali_T_Vol_tbl[tempIndex][3][i], Cali_T_Vol_tbl[tempIndex][4][i]);
+					}
+			}
+		}
+}
+/***************************************************************************************/
+/*
+ * Function              CaliK
+ * @param[in]            batIndex, Vol_tbl_now, current
+ * @return               CaliK
+ * \brief                bisearch the nearst voltage & get k(10 or other value)
+ *///
+/***************************************************************************************/
+uint16_t CaliK(uint8_t batIndex, uint16_t* Vol_tbl_now, int16_t I){
+	//Calibration of SOC edge slow down, superior to the voltage calibration
+	if(checkSOCEdgeSlowDownConditon(batIndex, Vol_tbl_now, I)){
+	  return CALI_K_EDGE_SLOW_DOWN;
+	}
+	
+	//voltage calibration, range check & k choose
+	uint8_t volIndex = BiSearch(Vol_tbl_now, CALI_POINT_NUM, batBMS[batIndex].BatVol);
+	uint8_t delt_leftVolPoint[2] = {0};
+	CaliVolRangeCalculate(batIndex, volIndex, delt_leftVolPoint, I);
+	//check if voltage in the left point voltage range
+	if(batBMS[batIndex].BatVol <= Vol_tbl_now[volIndex] - delt_leftVolPoint[0] || batBMS[batIndex].BatVol >= Vol_tbl_now[volIndex] + delt_leftVolPoint[1]){
+	  if(volIndex == CALI_POINT_NUM - 1) return CALI_K_WITHOUT_CALI;
+		//right point exists, so check it
+		uint8_t delt_rightVolPoint[2] = {0};
+		CaliVolRangeCalculate(batIndex, volIndex, delt_rightVolPoint, I);
+		if(batBMS[batIndex].BatVol <= Vol_tbl_now[volIndex + 1] - delt_rightVolPoint[0] || batBMS[batIndex].BatVol >= Vol_tbl_now[volIndex + 1] + delt_rightVolPoint[1]){
+		  return CALI_K_WITHOUT_CALI;	
+		}
+		return CaliKChooseBasedOnSOC(batIndex, volIndex+1, I);
+	}
+	
+  return CaliKChooseBasedOnSOC(batIndex, volIndex, I);
+}
+/***************************************************************************************/
+/*
+ * Function              checkSOCEdgeSlowDownConditon
+ * @param[in]            batIndex, * Vol_tbl_now, current
+ * @return               whether cali soc should slow down 
+ * \brief                
+ *///
+/***************************************************************************************/
+bool checkSOCEdgeSlowDownConditon(uint8_t batIndex, uint16_t* Vol_tbl_now, int16_t I){
+    uint16_t batSOC  = (uint16_t)(((float)batBMS[batIndex].BatSOCCal/boxInfo.SingleBatCoulombTotal) * 10000);
+	  bool isSOCInDchgLowestRange = (batSOC > (Cali_dchg_SOC_tbl[0] - Cali_delt_dchg_SOC_region[0]) && batSOC < (Cali_dchg_SOC_tbl[0] - Cali_delt_dchg_SOC_region[0]));
+	  bool isSOCInChgHighestRange = (batSOC > (Cali_chg_SOC_tbl[CALI_POINT_NUM - 1] - Cali_delt_chg_SOC_region[CALI_POINT_NUM - 1]) && batSOC < (Cali_chg_SOC_tbl[CALI_POINT_NUM - 1] - Cali_delt_chg_SOC_region[CALI_POINT_NUM - 1]));
+		bool isVolDchgHigher = batBMS[batIndex].BatVol > (Vol_tbl_now[0] + 5);  //5mV
+		bool isVolChgLower   = batBMS[batIndex].BatVol < (Vol_tbl_now[CALI_POINT_NUM - 1] - 5);  //5mV
+	  if(I > 0){
+			//chg
+			if(isSOCInChgHighestRange && isVolChgLower){
+			  return true;
+			}
+		}else{
+			//dchg
+		  if(isSOCInDchgLowestRange && isVolDchgHigher){
+			  return true;
+			}
+		}
+		
+		return false;
+}
+/***************************************************************************************/
+/*
+ * Function              CaliKChooseBasedOnSOC
+ * @param[in]            batIndex, volIndex, current
+ * @return               CaliK
+ * \brief                get k around the volIndex voltage based on SOC(10 or other value)
+ *///
+/***************************************************************************************/
+uint16_t CaliKChooseBasedOnSOC(uint8_t batIndex, uint8_t volIndex, int16_t I){
+	//Check SOC error
+	uint16_t batSOC  = (uint16_t)(((float)batBMS[batIndex].BatSOCCal/boxInfo.SingleBatCoulombTotal) * 10000);
+	uint16_t standardSOC = 0;
+	int16_t SOCErrorRange = 0;
+	if(I > 0){
+		standardSOC = Cali_chg_SOC_tbl[volIndex];
+		SOCErrorRange = Cali_delt_chg_SOC_region[volIndex];
+	}else{
+	  standardSOC = Cali_dchg_SOC_tbl[volIndex];
+		SOCErrorRange = Cali_delt_dchg_SOC_region[volIndex];
+	}
+	//do not minus two uint, it has to be a signed int to be compared with standard value
+	int16_t SOC_error = batSOC - standardSOC;
+	
+	if(SOC_error > SOCErrorRange){
+	//Higher SOC
+		if(I > 0){
+			//charge
+		  return Cali_K_chg_Higher_SOC[volIndex];
+		}else{
+			//discharge
+		  return Cali_K_dchg_Higher_SOC[volIndex];
+		}
+	}else if(SOC_error < -SOCErrorRange){
+	//Lower SOC
+		if(I > 0){
+			//charge
+		  return Cali_K_chg_Lower_SOC[volIndex];
+		}else{
+			//discharge
+		  return Cali_K_dchg_Lower_SOC[volIndex];
+		}
+	}
+	//SOC is in a acceptable region
+	return CALI_K_WITHOUT_CALI;
+}
+
+/***************************************************************************************/
+/*
+ * Function              CaliVolRangeCalculate
+ * @param[in]            batIndex, volIndex, delt_Vol, I
+ * @return               void(left value & right value in delt_Vol
+ * \brief                voltage range
+ *///
+/***************************************************************************************/
+void CaliVolRangeCalculate(uint8_t batIndex, uint8_t volIndex, uint8_t* delt_Vol, int16_t I){
+    delt_Vol[0] = 0;
+	  delt_Vol[1] = 0;
+	  uint8_t T0_VolRange_tbl[CALI_POINT_NUM] = {5, 0, 0, 5};
+		
+	  if(batBMS[batIndex].BatTemp > 300){
+		  delt_Vol[0] = 5;
+			delt_Vol[1] = 5;
+		}else if(batBMS[batIndex].BatTemp > 200){
+			//T25
+		  if(I >= -TEN_TIMES_03C){
+			  delt_Vol[0] = 5;
+			  delt_Vol[1] = 5;
+			}else{
+			  delt_Vol[0] = 3;
+			  delt_Vol[1] = 5;
+			}
+		
+		}else if(batBMS[batIndex].BatTemp > 100){
+			//T15
+		  if(I >= -TEN_TIMES_01C){
+			  delt_Vol[0] = 5;
+			  delt_Vol[1] = 5;
+			}else{
+			  delt_Vol[0] = 2;
+			  delt_Vol[1] = 5;
+			}
+		}else{
+		  //T0
+		  if(I >= TEN_TIMES_03C || I <= -TEN_TIMES_03C){
+			  delt_Vol[0] = T0_VolRange_tbl[volIndex];
+			  delt_Vol[1] = T0_VolRange_tbl[volIndex];
+			}else{
+			  delt_Vol[0] = 3;
+			  delt_Vol[1] = 3;
+			}
+		}
 }

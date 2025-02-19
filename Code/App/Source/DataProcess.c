@@ -60,7 +60,7 @@ void BQDataGet(){
 	  PcPointBuffer[LDpinVol] = BQ769x2_ReadVoltage(LDPinVoltage);
 		BQ769x2_ReadAllTemperatures();
 		for(int i = 0; i < 4; i++){
-		    PcPointBuffer[ts1 + i] = (uint16_t)(Temperature[i] * 10);//float occupies 4 bytes
+		    PcPointBuffer[ts1 + i] = (int16_t)(Temperature[i] * 10);//float occupies 4 bytes
 		}
 		//current
 		BQ769x2_ReadCurrent();

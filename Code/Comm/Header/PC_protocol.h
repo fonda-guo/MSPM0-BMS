@@ -29,8 +29,8 @@ typedef enum{
 	test_cnter,
 	debug_register1,
 	debug_register2,
-	SOC_box,
-	SOC_cell1,
+	SOC_box,            //counter
+	SOC_cell1,          //BatSOCCal
 	SOC_cell2,
 	SOC_cell3,
 	SOC_cell4,
@@ -58,11 +58,14 @@ typedef enum{
 	dVdC7,
 	dVdC8,
 	CB_bits,
+	Cali_bits,
+	SOC_box_cal,
+	SOC_box_show,        //final Box SOC
 	//add before here
 	fault,
   debug_addr1,
 	debug_addr2,
-	controlBits,
+	controlBits,         //0->CB
 	u16_pc_buffer_num,
 }PC_point;
 
