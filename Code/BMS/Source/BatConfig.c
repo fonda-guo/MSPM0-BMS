@@ -20,16 +20,17 @@ const uint16_t Cali_T_tbl[CALI_T_NUM] = {0, 150, 250, 350, 450};  // temperature
 const uint16_t Cali_chg_SOC_tbl[CALI_POINT_NUM]  = {500, 2000, 6000, 9700};
 const uint16_t Cali_dchg_SOC_tbl[CALI_POINT_NUM] = {500, 2000, 6500, 9900};
 //soc error tbl
-//const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {100, 300, 700, 150};
-//const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {100, 300, 700, 100};
+const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {100, 300, 700, 150};
+const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {100, 300, 700, 100};
 //test
-const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {10, 10, 10, 10};
-const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {10, 10, 10, 10};
+//const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {10, 10, 10, 10};
+//const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {10, 10, 10, 10};
+
 //k tbl * 10
 const uint16_t Cali_K_dchg_Higher_SOC[CALI_POINT_NUM]  = {200, 50, 30, 15};
-const uint16_t Cali_K_dchg_Lower_SOC[CALI_POINT_NUM]   = {1, 3, 5, 8};
+const uint16_t Cali_K_dchg_Lower_SOC[CALI_POINT_NUM]   = {1, 2, 3, 8};
 
-const uint16_t Cali_K_chg_Higher_SOC[CALI_POINT_NUM]  = {8, 5, 3, 1};
+const uint16_t Cali_K_chg_Higher_SOC[CALI_POINT_NUM]  = {8, 3, 2, 1};
 const uint16_t Cali_K_chg_Lower_SOC[CALI_POINT_NUM]   = {15, 30, 50, 200};
 
 //Temperature 0 Celsius

@@ -66,9 +66,9 @@ void BMSInit(void){
     boxBMS.status                  = (CYCLE_CALIB_ENABLE | START_UP_PROCESS);
     boxBMS.BoxSOCShow              = MAX_SOC;
     boxBMS.BoxSOHShow              = MAX_SOH;
-    boxBMS.BoxCoulombCounter       = MAX_BAT_CAP;
-    boxBMS.BoxCoulombTotal         = MAX_BAT_CAP;
-    boxBMS.BoxSOCCal               = MAX_BAT_CAP;
+    boxBMS.BoxCoulombCounter       = NOMINAL_BAT_CAP;
+    boxBMS.BoxCoulombTotal         = NOMINAL_BAT_CAP;
+    boxBMS.BoxSOCCal               = NOMINAL_BAT_CAP;
     boxBMS.BoxCoulombCounterCali   = 0;
     
     boxInfo.MaxBatVol              = 0;
@@ -76,7 +76,7 @@ void BMSInit(void){
     boxInfo.MaxBatTemp             = 0;
     boxInfo.MaxBatSOC              = 0;
     boxInfo.MinBatSOC              = 0;
-    boxInfo.SingleBatCoulombTotal  = MAX_BAT_CAP;    
+    boxInfo.SingleBatCoulombTotal  = NOMINAL_BAT_CAP;    
     boxInfo.DataCheck              = 0;
 
     memset(batBMS,0,sizeof(batBMS));
@@ -96,7 +96,7 @@ void BMSInit(void){
  * Function              BMSTask
  * @param[in]            none
  * @return               none
- * \brief                BMS function runs every 3.75ms
+ * \brief                BMS function runs every 500ms
  *///
 /***************************************************************************************/
 void BMSTask(void){
@@ -179,13 +179,12 @@ void BMSBasicDataGet(void){
 			
 			  boxInfo.MaxBatSOC = (boxInfo.MaxBatSOC > batBMS[index].BatSOCCal) ? boxInfo.MaxBatSOC : batBMS[index].BatSOCCal;
 			  boxInfo.MinBatSOC = (boxInfo.MinBatSOC < batBMS[index].BatSOCCal) ? boxInfo.MinBatSOC : batBMS[index].BatSOCCal;
-			  			 
-        boxInfo.MaxBatVol = PcPointBuffer[maxcellvol];
-        boxInfo.MinBatVol = PcPointBuffer[mincellvol];
 
         boxBMS.temperature += batBMS[index].BatTemp;
     }
-        boxBMS.temperature /= CELL_NUM;
+    boxBMS.temperature /= CELL_NUM;
+		boxInfo.MaxBatVol = PcPointBuffer[maxcellvol];
+    boxInfo.MinBatVol = PcPointBuffer[mincellvol];
     return;
 }
 /***************************************************************************************/
@@ -198,7 +197,7 @@ void BMSBasicDataGet(void){
 /***************************************************************************************/
 void BMSCalTask(void){
     int16_t I = PcPointBuffer[current];//uint16->int16 10 times
-    
+
 	  if(I <= NO_CURRENT_THRESHOLD && I >= -NO_CURRENT_THRESHOLD){
 		    chgdchgStatus.status = NO_CUR_STATUS;
 		}else if(I < 0){
@@ -491,17 +490,24 @@ void BoxSOCShowUpdate(void){
 /***************************************************************************************/
 void BMSCoulombTotalRealTimeUpdate(void){
     if(boxBMS.BoxCoulombCounter == 0){
+			  if(boxBMS.BoxCoulombCounterCali >= 50) boxBMS.status |= BOXCAP_REAL_TIME_UPDATE; // >50 means >1A, allow some noise
 		    boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
 				boxInfo.SingleBatCoulombTotal += boxBMS.BoxCoulombCounterCali;
 			  boxBMS.BoxCoulombCounterCali = 0;
+			  return;
 		}
+		
 		if(boxBMS.BoxCoulombCounter == boxBMS.BoxCoulombTotal){
+			  if(boxBMS.BoxCoulombCounterCali >= 50) boxBMS.status |= BOXCAP_REAL_TIME_UPDATE; // >50 means >1A, allow some noise
 		    boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
 			  boxBMS.BoxCoulombCounter += boxBMS.BoxCoulombCounterCali;
 			  boxInfo.SingleBatCoulombTotal += boxBMS.BoxCoulombCounterCali;
 			  boxBMS.BoxCoulombCounterCali = 0;
+			  return;
 		}
-
+		
+		boxBMS.status &= (~BOXCAP_REAL_TIME_UPDATE);
+    return;
 }
 
 //used for now, a more accurate calibration method is needed later 
@@ -554,13 +560,15 @@ int16_t abs_value(int16_t error){
 
 uint32_t BatSOCVolEst_NoCur(uint16_t vol, uint32_t coulombSOC){
     uint8_t index = BiSearch(nocur_voltbl.vol_table, nocur_voltbl.len, vol);
-	  uint16_t SOC_vol_estimate = nocur_voltbl.soc_table[index];
+	  int16_t SOC_vol_estimate = nocur_voltbl.soc_table[index];
 	  uint16_t EESOC = (uint16_t)(((float)coulombSOC/boxInfo.SingleBatCoulombTotal) * 100);
 	  if(abs_value(SOC_vol_estimate - EESOC) >= nocur_voltbl.soc_error_range[index]){    
 			if(index < nocur_voltbl.len - 1){
 			    float ratio = ((float)nocur_voltbl.soc_table[index + 1] - SOC_vol_estimate)/(nocur_voltbl.vol_table[index + 1] - nocur_voltbl.vol_table[index]);
 				  SOC_vol_estimate += ratio * (vol - nocur_voltbl.vol_table[index]);
 			}
+			SOC_vol_estimate = (SOC_vol_estimate < 0)     ? 0   : SOC_vol_estimate; //In case bat vol is less than the least voltage in the  tbl
+      SOC_vol_estimate = (SOC_vol_estimate > 100)   ? 100 : SOC_vol_estimate;
 			uint32_t new_couombSOC = (uint32_t)((float)boxInfo.SingleBatCoulombTotal / 100 * SOC_vol_estimate);
 			return new_couombSOC;
 		}else{
@@ -624,7 +632,7 @@ void CellBalanceTask(void){
 					  }
 					}else{
 						//should open
-						if(!(cellBalance.statusCB & CB_ON) && !(cellBalance.statusCB & CB_FORBIDEN)){
+						if(!(cellBalance.statusCB & CB_ON) && !(cellBalance.statusCB & CB_FORBIDDEN)){
 					    cellBalance.statusCB |= CB_TURN_ON;
 					  }
 					}
@@ -734,6 +742,12 @@ void SingleBatSOCCalVolCali(uint8_t batIndex, int16_t I){
 /***************************************************************************************/
 void SingleBatSOCCalVolCaliCal(uint8_t batIndex, uint16_t k_cali){
 	int32_t cali_dC = (int32_t)((float)k_cali * dC / 10);
+	//cap real time update compensate
+	int32_t capUpdataCompensate = 0;
+	if((boxBMS.status & BOXCAP_REAL_TIME_UPDATE) != 0){
+	    capUpdataCompensate = dC;
+	}
+	
   if(cali_dC > 0){
         //Discahrge
         if(batBMS[batIndex].BatSOCCal > cali_dC){
@@ -744,8 +758,8 @@ void SingleBatSOCCalVolCaliCal(uint8_t batIndex, uint16_t k_cali){
         }
     }else{
         //Charge
-        if(batBMS[batIndex].BatSOCCal < (boxInfo.SingleBatCoulombTotal + cali_dC)){
-            batBMS[batIndex].BatSOCCal -= cali_dC;
+        if(batBMS[batIndex].BatSOCCal < (boxInfo.SingleBatCoulombTotal + cali_dC + capUpdataCompensate)){
+            batBMS[batIndex].BatSOCCal -= (cali_dC + capUpdataCompensate);
         }else{
             //Still space left
             batBMS[batIndex].BatSOCCal = boxInfo.SingleBatCoulombTotal;
@@ -793,12 +807,12 @@ void BoxSOCCalVolCaliCal(void){
 					dCali = (CALI_BOX_MAX_STEP > dSOCCoulomb) ? dSOCCoulomb : CALI_BOX_MAX_STEP;
 				}else{
 				//Charge
-					dCali = -0.7 * dC; //charge less (different sign)
+					dCali = -0.95f * dC; //charge less (different sign)
 				}
 			}else{
 			  if(dC > 0){
 				//Discahrge
-					dCali = -0.7 * dC; //discharge less (different sign)
+					dCali = -0.95f * dC; //discharge less (different sign)
 				}else{
 				//Charge
 					int32_t dSOCCoulomb = (BoxSOC - BoxSOCBasedOnBat) * (boxInfo.SingleBatCoulombTotal / 10000);
@@ -831,6 +845,7 @@ void BoxSOCCalVolCaliCal(void){
     }else{
         PcPointBuffer[SOC_box_cal] = (uint16_t)(((float)boxBMS.BoxSOCCal/boxBMS.BoxCoulombTotal) * 10000);
     }
+		BoxSOCEEBuffer = boxBMS.BoxSOCCal;
 }
 /***************************************************************************************/
 /*
@@ -948,8 +963,8 @@ uint16_t CaliK(uint8_t batIndex, uint16_t* Vol_tbl_now, int16_t I){
 /***************************************************************************************/
 bool checkSOCEdgeSlowDownConditon(uint8_t batIndex, uint16_t* Vol_tbl_now, int16_t I){
     uint16_t batSOC  = (uint16_t)(((float)batBMS[batIndex].BatSOCCal/boxInfo.SingleBatCoulombTotal) * 10000);
-	  bool isSOCInDchgLowestRange = (batSOC > (Cali_dchg_SOC_tbl[0] - Cali_delt_dchg_SOC_region[0]) && batSOC < (Cali_dchg_SOC_tbl[0] - Cali_delt_dchg_SOC_region[0]));
-	  bool isSOCInChgHighestRange = (batSOC > (Cali_chg_SOC_tbl[CALI_POINT_NUM - 1] - Cali_delt_chg_SOC_region[CALI_POINT_NUM - 1]) && batSOC < (Cali_chg_SOC_tbl[CALI_POINT_NUM - 1] - Cali_delt_chg_SOC_region[CALI_POINT_NUM - 1]));
+	  bool isSOCInDchgLowestRange = (batSOC > 0 && batSOC < (Cali_dchg_SOC_tbl[0] + Cali_delt_dchg_SOC_region[0]));
+	  bool isSOCInChgHighestRange = (batSOC > (Cali_chg_SOC_tbl[CALI_POINT_NUM - 1] - Cali_delt_chg_SOC_region[CALI_POINT_NUM - 1]) && batSOC < MAX_SOC);
 		bool isVolDchgHigher = batBMS[batIndex].BatVol > (Vol_tbl_now[0] + 5);  //5mV
 		bool isVolChgLower   = batBMS[batIndex].BatVol < (Vol_tbl_now[CALI_POINT_NUM - 1] - 5);  //5mV
 	  if(I > 0){

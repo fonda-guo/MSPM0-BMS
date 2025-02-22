@@ -65,7 +65,7 @@
 
 //cell balance
 #define CB_OFF                   0x00
-#define CB_FORBIDEN              0x10
+#define CB_FORBIDDEN             0x10
 #define CB_ON                    0x01
 #define CB_STATUS_BIT            0x01
 #define CB_TURN_ON               0x02
@@ -89,11 +89,12 @@
 #define CALI_BOX_MAX_STEP        216000
 #define CALI_BOX_SHOW_MAX_STEP   10
 
-//software status define macro
+//BOX BMS software status define macro
 #define START_UP_PROCESS           0x0001
 #define REACH_BAT_LOWER_BOUND      0x0002
 #define REACH_BAT_UPPER_BOUND      0x0004
 #define CYCLE_CALIB_ENABLE         0x0008
+#define BOXCAP_REAL_TIME_UPDATE    0x0010
 #define CYCLE_WRITE_EE             (REACH_BAT_LOWER_BOUND|\
                                     REACH_BAT_UPPER_BOUND)
 //Flash address(use EE in the formal version)

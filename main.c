@@ -6,7 +6,7 @@
 #include "B5_SOC.h"
 
 #define SW_VER_ADDRESS (0x00006000)
-uint32_t SW_VER = 0x25021701;
+uint32_t SW_VER = 0x25022001;
 
 
 int main(void)

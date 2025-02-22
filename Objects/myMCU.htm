@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\Objects\myMCU.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\Objects\myMCU.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Wed Feb 19 10:53:52 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6220000: Last Updated: Sat Feb 22 11:35:49 2025
 <BR><P>
 <H3>Maximum Stack Usage =        200 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -402,14 +402,6 @@ Global Symbols
 <LI><a href="#[37]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dadd1
 </UL>
 
-<P><STRONG><a name="[75]"></a>__aeabi_d2iz</STRONG> (Thumb, 0 bytes, Stack size 12 bytes, dfixi.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = __aeabi_d2iz
-</UL>
-<BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BoxSOCCalVolCaliCal
-</UL>
-
-<P><STRONG><a name="[d2]"></a>_dfix</STRONG> (Thumb, 98 bytes, Stack size 12 bytes, dfixi.o(.text), UNUSED)
-
 <P><STRONG><a name="[3b]"></a>__aeabi_i2d_normalise</STRONG> (Thumb, 66 bytes, Stack size 0 bytes, dflti.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2d
 <LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
@@ -418,33 +410,32 @@ Global Symbols
 <P><STRONG><a name="[3a]"></a>__aeabi_i2d</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, dflti.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d_normalise
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BoxSOCCalVolCaliCal
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQ769x2_ReadAllTemperatures
+<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQ769x2_ReadAllTemperatures
 </UL>
 
-<P><STRONG><a name="[d3]"></a>_dflt</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, dflti.o(.text), UNUSED)
+<P><STRONG><a name="[d2]"></a>_dflt</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, dflti.o(.text), UNUSED)
 
 <P><STRONG><a name="[3c]"></a>__aeabi_ui2d</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, dflti.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d_normalise
 </UL>
 
-<P><STRONG><a name="[d4]"></a>_dfltu</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, dflti.o(.text), UNUSED)
+<P><STRONG><a name="[d3]"></a>_dfltu</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, dflti.o(.text), UNUSED)
 
 <P><STRONG><a name="[65]"></a>__aeabi_dmul</STRONG> (Thumb, 0 bytes, Stack size 56 bytes, dmul.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = __aeabi_dmul
 </UL>
-<BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BoxSOCCalVolCaliCal
-<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQ769x2_ReadAllTemperatures
+<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQ769x2_ReadAllTemperatures
 </UL>
 
-<P><STRONG><a name="[d5]"></a>__muldf3</STRONG> (Thumb, 0 bytes, Stack size 56 bytes, dmul.o(.text), UNUSED)
+<P><STRONG><a name="[d4]"></a>__muldf3</STRONG> (Thumb, 0 bytes, Stack size 56 bytes, dmul.o(.text), UNUSED)
 
-<P><STRONG><a name="[d6]"></a>_dmul</STRONG> (Thumb, 558 bytes, Stack size 56 bytes, dmul.o(.text), UNUSED)
+<P><STRONG><a name="[d5]"></a>_dmul</STRONG> (Thumb, 558 bytes, Stack size 56 bytes, dmul.o(.text), UNUSED)
 
 <P><STRONG><a name="[4b]"></a>__aeabi_fdiv</STRONG> (Thumb, 0 bytes, Stack size 20 bytes, fdiv.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = __aeabi_fdiv
 </UL>
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliKChooseBasedOnSOC
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;checkSOCEdgeSlowDownConditon
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InterpolVolBasedOnCur
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SingleBatSOCCalVolCaliCal
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CellBalanceTask
@@ -456,7 +447,7 @@ Global Symbols
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSCalTask
 </UL>
 
-<P><STRONG><a name="[d7]"></a>__divsf3</STRONG> (Thumb, 0 bytes, Stack size 20 bytes, fdiv.o(.text), UNUSED)
+<P><STRONG><a name="[d6]"></a>__divsf3</STRONG> (Thumb, 0 bytes, Stack size 20 bytes, fdiv.o(.text), UNUSED)
 
 <P><STRONG><a name="[3e]"></a>_fdiv</STRONG> (Thumb, 334 bytes, Stack size 20 bytes, fdiv.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[3d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_frdiv
@@ -470,6 +461,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __aeabi_f2iz
 </UL>
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliKChooseBasedOnSOC
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;checkSOCEdgeSlowDownConditon
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InterpolVolBasedOnCur
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SingleBatSOCCalVolCaliCal
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CellBalanceTask
@@ -482,14 +474,14 @@ Global Symbols
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQDataGet
 </UL>
 
-<P><STRONG><a name="[d8]"></a>_ffix</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, ffixi.o(.text), UNUSED)
+<P><STRONG><a name="[d7]"></a>_ffix</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, ffixi.o(.text), UNUSED)
 
 <P><STRONG><a name="[73]"></a>__aeabi_f2uiz</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, ffixui.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BoxSOCInitEstimate
 <LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BatSOCVolEst_NoCur
 </UL>
 
-<P><STRONG><a name="[d9]"></a>_ffixu</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, ffixui.o(.text), UNUSED)
+<P><STRONG><a name="[d8]"></a>_ffixu</STRONG> (Thumb, 48 bytes, Stack size 0 bytes, ffixui.o(.text), UNUSED)
 
 <P><STRONG><a name="[40]"></a>__aeabi_i2f_normalise</STRONG> (Thumb, 72 bytes, Stack size 0 bytes, fflti.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
@@ -508,12 +500,13 @@ Global Symbols
 <LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BatSOCVolEst_NoCur
 </UL>
 
-<P><STRONG><a name="[da]"></a>_fflt</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
+<P><STRONG><a name="[d9]"></a>_fflt</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
 
 <P><STRONG><a name="[41]"></a>__aeabi_ui2f</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, fflti.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f_normalise
 </UL>
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliKChooseBasedOnSOC
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;checkSOCEdgeSlowDownConditon
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SingleBatSOCCalVolCaliCal
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CellBalanceTask
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BoxSOCCalVolCaliCal
@@ -523,7 +516,7 @@ Global Symbols
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSCalTask
 </UL>
 
-<P><STRONG><a name="[db]"></a>_ffltu</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
+<P><STRONG><a name="[da]"></a>_ffltu</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, fflti.o(.text), UNUSED)
 
 <P><STRONG><a name="[24]"></a>__user_setup_stackheap</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, sys_stackheap_outer.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __user_setup_stackheap
@@ -544,32 +537,32 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[27]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[dc]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[db]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[42]"></a>__user_perproc_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[24]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[dd]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[dc]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[2d]"></a>_sys_exit</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, sys_exit.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_exit
 </UL>
 
-<P><STRONG><a name="[de]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[dd]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[df]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[de]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[e0]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
+<P><STRONG><a name="[df]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[55]"></a>BMSBasicDataGet</STRONG> (Thumb, 512 bytes, Stack size 80 bytes, b5_soc.o(.text.BMSBasicDataGet))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = BMSBasicDataGet
+<P><STRONG><a name="[55]"></a>BMSBasicDataGet</STRONG> (Thumb, 504 bytes, Stack size 68 bytes, b5_soc.o(.text.BMSBasicDataGet))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = BMSBasicDataGet
 </UL>
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSTask
 </UL>
 
-<P><STRONG><a name="[46]"></a>BMSCalTask</STRONG> (Thumb, 296 bytes, Stack size 24 bytes, b5_soc.o(.text.BMSCalTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 164<LI>Call Chain = BMSCalTask &rArr; SingleBatSOCCalVolCali &rArr; CaliK &rArr; CaliKChooseBasedOnSOC &rArr; __aeabi_fdiv
+<P><STRONG><a name="[46]"></a>BMSCalTask</STRONG> (Thumb, 328 bytes, Stack size 24 bytes, b5_soc.o(.text.BMSCalTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = BMSCalTask &rArr; SingleBatSOCCalVolCali &rArr; CaliK &rArr; checkSOCEdgeSlowDownConditon &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CellBalanceTask
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BoxSOCCalVolCaliCal
@@ -612,7 +605,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[54]"></a>BMSTask</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, b5_soc.o(.text.BMSTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = BMSTask &rArr; BMSCalTask &rArr; SingleBatSOCCalVolCali &rArr; CaliK &rArr; CaliKChooseBasedOnSOC &rArr; __aeabi_fdiv
+<BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = BMSTask &rArr; BMSCalTask &rArr; SingleBatSOCCalVolCali &rArr; CaliK &rArr; checkSOCEdgeSlowDownConditon &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSWriteEETask
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSCoulombTotalFinalUpdate
@@ -720,7 +713,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[52]"></a>BatSOCVolEst_NoCur</STRONG> (Thumb, 264 bytes, Stack size 40 bytes, b5_soc.o(.text.BatSOCVolEst_NoCur))
+<P><STRONG><a name="[52]"></a>BatSOCVolEst_NoCur</STRONG> (Thumb, 272 bytes, Stack size 40 bytes, b5_soc.o(.text.BatSOCVolEst_NoCur))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = BatSOCVolEst_NoCur &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -746,8 +739,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSCalTask
 </UL>
 
-<P><STRONG><a name="[4a]"></a>BoxSOCCalVolCaliCal</STRONG> (Thumb, 356 bytes, Stack size 24 bytes, b5_soc.o(.text.BoxSOCCalVolCaliCal))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = BoxSOCCalVolCaliCal &rArr; __aeabi_dmul
+<P><STRONG><a name="[4a]"></a>BoxSOCCalVolCaliCal</STRONG> (Thumb, 360 bytes, Stack size 24 bytes, b5_soc.o(.text.BoxSOCCalVolCaliCal))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = BoxSOCCalVolCaliCal &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
 <LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
@@ -755,9 +748,6 @@ Global Symbols
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2iz
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 <LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
-<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
-<LI><a href="#[3a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2iz
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidiv
 </UL>
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSCalTask
@@ -777,10 +767,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSStartUp
 </UL>
 
-<P><STRONG><a name="[76]"></a>CaliK</STRONG> (Thumb, 296 bytes, Stack size 32 bytes, b5_soc.o(.text.CaliK))
-<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = CaliK &rArr; CaliKChooseBasedOnSOC &rArr; __aeabi_fdiv
+<P><STRONG><a name="[75]"></a>CaliK</STRONG> (Thumb, 320 bytes, Stack size 32 bytes, b5_soc.o(.text.CaliK))
+<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = CaliK &rArr; checkSOCEdgeSlowDownConditon &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliKChooseBasedOnSOC
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;checkSOCEdgeSlowDownConditon
 </UL>
 <BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SingleBatSOCCalVolCali
 </UL>
@@ -793,7 +784,7 @@ Global Symbols
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2iz
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 </UL>
-<BR>[Called By]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliK
+<BR>[Called By]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliK
 </UL>
 
 <P><STRONG><a name="[61]"></a>CellBalanceInit</STRONG> (Thumb, 906 bytes, Stack size 72 bytes, bq769x2_protocol.o(.text.CellBalanceInit))
@@ -1128,9 +1119,9 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[49]"></a>SingleBatSOCCalVolCali</STRONG> (Thumb, 392 bytes, Stack size 72 bytes, b5_soc.o(.text.SingleBatSOCCalVolCali))
-<BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = SingleBatSOCCalVolCali &rArr; CaliK &rArr; CaliKChooseBasedOnSOC &rArr; __aeabi_fdiv
+<BR><BR>[Stack]<UL><LI>Max Depth = 148<LI>Call Chain = SingleBatSOCCalVolCali &rArr; CaliK &rArr; checkSOCEdgeSlowDownConditon &rArr; __aeabi_fdiv
 </UL>
-<BR>[Calls]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliK
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliK
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InterpolVolBasedOnCur
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SingleBatSOCCalVolCaliCal
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_idiv
@@ -1138,7 +1129,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSCalTask
 </UL>
 
-<P><STRONG><a name="[95]"></a>SingleBatSOCCalVolCaliCal</STRONG> (Thumb, 164 bytes, Stack size 24 bytes, b5_soc.o(.text.SingleBatSOCCalVolCaliCal))
+<P><STRONG><a name="[95]"></a>SingleBatSOCCalVolCaliCal</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, b5_soc.o(.text.SingleBatSOCCalVolCaliCal))
 <BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = SingleBatSOCCalVolCaliCal &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
@@ -1151,7 +1142,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[15]"></a>TIMA0_IRQHandler</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, main.o(.text.TIMA0_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = TIMA0_IRQHandler &rArr; BMSTask &rArr; BMSCalTask &rArr; SingleBatSOCCalVolCali &rArr; CaliK &rArr; CaliKChooseBasedOnSOC &rArr; __aeabi_fdiv
+<BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = TIMA0_IRQHandler &rArr; BMSTask &rArr; BMSCalTask &rArr; SingleBatSOCCalVolCali &rArr; CaliK &rArr; checkSOCEdgeSlowDownConditon &rArr; __aeabi_fdiv
 </UL>
 <BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BMSTask
 </UL>
@@ -1194,6 +1185,17 @@ Global Symbols
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delayMS
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQ769x2_Init
+</UL>
+
+<P><STRONG><a name="[76]"></a>checkSOCEdgeSlowDownConditon</STRONG> (Thumb, 168 bytes, Stack size 24 bytes, b5_soc.o(.text.checkSOCEdgeSlowDownConditon))
+<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = checkSOCEdgeSlowDownConditon &rArr; __aeabi_fdiv
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fmul
+<LI><a href="#[41]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
+<LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2iz
+<LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
+</UL>
+<BR>[Called By]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliK
 </UL>
 
 <P><STRONG><a name="[5d]"></a>delayMS</STRONG> (Thumb, 28 bytes, Stack size 16 bytes, mymcucommbsw.o(.text.delayMS))
@@ -1276,6 +1278,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __aeabi_fmul
 </UL>
 <BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CaliKChooseBasedOnSOC
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;checkSOCEdgeSlowDownConditon
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InterpolVolBasedOnCur
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SingleBatSOCCalVolCaliCal
 <LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CellBalanceTask
@@ -1288,7 +1291,7 @@ Global Symbols
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BQDataGet
 </UL>
 
-<P><STRONG><a name="[e1]"></a>_fmul</STRONG> (Thumb, 172 bytes, Stack size 16 bytes, fmul.o(x$fpl$fmul), UNUSED)
+<P><STRONG><a name="[e0]"></a>_fmul</STRONG> (Thumb, 172 bytes, Stack size 16 bytes, fmul.o(x$fpl$fmul), UNUSED)
 
 <P><STRONG><a name="[71]"></a>__aeabi_fsub</STRONG> (Thumb, 0 bytes, Stack size 16 bytes, faddsub.o(x$fpl$fsub))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __aeabi_fsub

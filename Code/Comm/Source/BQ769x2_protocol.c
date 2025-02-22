@@ -221,8 +221,7 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     // 'Power Config' - 0x9234 = 0x2D80
     // Setting the DSLP_LDO bit allows the LDOs to remain active when the device goes into Deep Sleep mode
     // Set wake speed bits to 00 for best performance
-    // BQ769x2_SetRegister(PowerConfig, 0x2D80, 2);
-	  BQ769x2_SetRegister(PowerConfig, 0x2D90, 2);
+	BQ769x2_SetRegister(PowerConfig, 0x2D90, 2);
 
     // 'REG0 Config' - set REG0_EN bit to enable pre-regulator
     BQ769x2_SetRegister(REG0Config, 0x01, 1);
@@ -266,9 +265,6 @@ void BQ769x2_Init(BatPackBasicInfo* packInfo)
     BQ769x2_SetRegister(CCGain,0x40F21AD2,4);//7.4768*1.0119
     // Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
     BQ769x2_SetRegister(OCCThreshold, 0x05, 1);
-    //BQ769x2_SetRegister(
-    //    OCCThreshold, pBattParamsCfg->i16MaxChgCurtThd_mA / 2000, 1);
-
     // Set up OCD1 (over-current in discharge) Threshold - 0x9282 = 0x0A (20 mV = 20A across 1mOhm sense resistor) units of 2mV
     BQ769x2_SetRegister(OCD1Threshold, 0x0A, 1);
 

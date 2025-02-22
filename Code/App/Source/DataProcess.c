@@ -14,21 +14,21 @@ void CellBalanceNormalTask(){
 		
 		//CB check forbide bit
 	  if(PcPointBuffer[controlBits] & CB_STATUS_BIT){
-	    cellBalance.statusCB |= CB_FORBIDEN;
+	    cellBalance.statusCB |= CB_FORBIDDEN;
 	  }else{
-	    cellBalance.statusCB &= (~CB_FORBIDEN);
+	    cellBalance.statusCB &= (~CB_FORBIDDEN);
 	  }
 		
 	  //turn off
 	  if(cellBalance.statusCB & CB_ON){
 			//forbide or turn off
-	    if((cellBalance.statusCB & CB_FORBIDEN) || (cellBalance.statusCB & CB_TURN_OFF)){
+	    if((cellBalance.statusCB & CB_FORBIDDEN) || (cellBalance.statusCB & CB_TURN_OFF)){
 			  CloseCellBalance();
 		    cellBalance.statusCB &= (~CB_ON);
 			}
 	  }else{
 			//not forbide and turn on
-			if(!(cellBalance.statusCB & CB_FORBIDEN) && (cellBalance.statusCB & CB_TURN_ON)){
+			if(!(cellBalance.statusCB & CB_FORBIDDEN) && (cellBalance.statusCB & CB_TURN_ON)){
 			  OpenCellBalance(&packInfo);
 		    cellBalance.statusCB |= CB_ON;
 			}
