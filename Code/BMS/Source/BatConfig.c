@@ -2,14 +2,13 @@
 #include "BQ769x2_protocol.h"
 
 //no cur
-const uint16_t NoCur_VolTable[17] = {2850, 3113, 3218, 3234, 3261, 3279, 3292, 3302, 3303, 3304, 3306, 3308, 3332, 3338, 3340, 3350, 3400};
-const uint8_t NoCur_SOCRange[17] = {0, 5, 10, 15, 20, 25, 30, 40, 45, 50, 55, 60, 65, 70, 85, 95, 100};
-const uint8_t NoCur_SOCErrRange[17] = {10, 10, 10, 10, 10, 10, 15, 10, 10, 10, 10, 10, 10, 15, 20, 10, 5};
+const uint16_t NoCur_chg_VolTable[14]    = {2800, 3181, 3224, 3247, 3277, 3294, 3303, 3304, 3306, 3308, 3311, 3320, 3340, 3406};
+const uint8_t  NoCur_chg_SOCRange[14]    = {0, 5, 10, 15, 20, 25, 30, 40, 45, 50, 55, 60, 80, 100};
+const uint8_t  NoCur_chg_SOCErrRange[14] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 20, 20, 20};
 
-//little cur
-
-//large cur
-	
+const uint16_t NoCur_dchg_VolTable[14]    = {2800, 3205, 3248, 3282, 3291, 3293, 3305, 3330, 3331, 3339, 3390};
+const uint8_t  NoCur_dchg_SOCRange[14]    = {0, 10, 20, 30, 40, 50, 60, 70, 80, 95, 100};
+const uint8_t  NoCur_dchg_SOCErrRange[14] = {10, 10, 10, 10, 10, 10, 10, 10, 15, 15, 10};
 //---------------------------------------------------------------------------
 //SOC Calibration Data	
 //---------------------------------------------------------------------------	
@@ -89,8 +88,13 @@ BatPackBasicInfo packInfo = {
 };
 
 NoCurVolTable nocur_voltbl = {
-    .len = sizeof(NoCur_VolTable)/sizeof(uint16_t),
-	  .vol_table = NoCur_VolTable,
-	  .soc_table = NoCur_SOCRange,
-	  .soc_error_range = NoCur_SOCErrRange,
+    .chg_len = sizeof(NoCur_chg_VolTable)/sizeof(uint16_t),
+	  .chg_vol_table = NoCur_chg_VolTable,
+	  .chg_soc_table = NoCur_chg_SOCRange,
+	  .chg_soc_error_range = NoCur_chg_SOCErrRange,
+		
+		.dchg_len = sizeof(NoCur_dchg_VolTable)/sizeof(uint16_t),
+	  .dchg_vol_table = NoCur_dchg_VolTable,
+	  .dchg_soc_table = NoCur_dchg_SOCRange,
+	  .dchg_soc_error_range = NoCur_dchg_SOCErrRange,
 };

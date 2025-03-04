@@ -89,6 +89,9 @@ void BMSInit(void){
 	
 	  memset(&chgdchgStatus,0,sizeof(chgdchgStatus));
 		
+		boxSOH.absCoulombCnter = 0;
+		boxSOH.alreadyLost = 0;
+		boxSOH.totalLifeCap = TOTAL_LIFE_CAP;
     dC = 0;
 }
 /***************************************************************************************/
@@ -153,6 +156,12 @@ void BMSStartUp(void){
     //BOX SOC initial value
 		BoxSOCInitEstimate();
     memset(SingleBatSOCEEReadBuffer,0,sizeof(SingleBatSOCEEReadBuffer));
+		
+		//SOHInit
+		BoxSOHInit();
+		
+		HysteresisInit();
+		
     boxBMS.status &= (~START_UP_PROCESS);
     return;
 }
@@ -230,6 +239,9 @@ void BMSCalTask(void){
 		
 		CellBalanceTask();
 		
+		SOHTask();
+		
+		HysteresisTask();
 }
 /***************************************************************************************/
 /*
@@ -305,8 +317,14 @@ void BMSWriteEETask(void){
         Write32Flash(&boxBMS.BoxCoulombTotal, E2_COULOMBTOTAL_ADDR);
 		}else if(writeEEcnt == 129){
 		    Write32Flash(&boxInfo.SingleBatCoulombTotal, E2_SINGLEBATCOULOMBTOTAL_ADDR);
-		}else if(writeEEcnt > 129){
-		    writeEEcnt = 0;
+		}else if(writeEEcnt == 130){
+		    Write32Flash(&boxSOH.absCoulombCnter, E2_COULOMB_CNTER_SOH_ADDR);
+		}else if(writeEEcnt == 131){
+			  Write32Flash(&boxSOH.alreadyLost, E2_ALREADY_LOST_SOH_ADDR);
+		}else if(writeEEcnt == 132){
+		    Write32Flash(&chgdchgStatus.hysteresisStatus, E2_HYSTERESIS_ADDR);
+		}else if(writeEEcnt > 132){
+			  writeEEcnt = 0;
 		}
 }
 //To be done
@@ -379,8 +397,8 @@ void ResistanceCal(int16_t Current){
 									
 								   float r = (float)(abs_value(batBMS[i].BatVol - cellR.voltage[i])) * 10000 / cellR.abs_dcur;//micro-omega *1000*10
 									 cellR.resis_cell[i] = (uint16_t)r;
-									 //
-									 PcPointBuffer[resis_cell1 + i] = cellR.resis_cell[i];
+									 //test
+									 //PcPointBuffer[resis_cell1 + i] = cellR.resis_cell[i];
 								}
 								cellR.statusR = INIT_R_CAL;
 						}
@@ -558,14 +576,42 @@ int16_t abs_value(int16_t error){
 	return error < 0 ? (-error): (error);
 }
 
+
 uint32_t BatSOCVolEst_NoCur(uint16_t vol, uint32_t coulombSOC){
-    uint8_t index = BiSearch(nocur_voltbl.vol_table, nocur_voltbl.len, vol);
-	  int16_t SOC_vol_estimate = nocur_voltbl.soc_table[index];
-	  uint16_t EESOC = (uint16_t)(((float)coulombSOC/boxInfo.SingleBatCoulombTotal) * 100);
-	  if(abs_value(SOC_vol_estimate - EESOC) >= nocur_voltbl.soc_error_range[index]){    
-			if(index < nocur_voltbl.len - 1){
-			    float ratio = ((float)nocur_voltbl.soc_table[index + 1] - SOC_vol_estimate)/(nocur_voltbl.vol_table[index + 1] - nocur_voltbl.vol_table[index]);
-				  SOC_vol_estimate += ratio * (vol - nocur_voltbl.vol_table[index]);
+	  uint8_t chg = (chgdchgStatus.hysteresisStatus == CHG_VALUE);
+	  if(chgdchgStatus.hysteresisStatus > CHG_VALUE || chgdchgStatus.hysteresisStatus < DCHG_VALUE){
+		    chg = 1;
+		}
+		
+		int16_t SOC_vol_estimate = 0;
+		uint16_t EESOC = (uint16_t)(((float)coulombSOC/boxInfo.SingleBatCoulombTotal) * 100);
+		//charge state before check
+		uint8_t   len       = nocur_voltbl.chg_len;
+		const uint16_t* vol_table = nocur_voltbl.chg_vol_table;
+		const uint8_t*  soc_table = nocur_voltbl.chg_soc_table;
+		const uint8_t*  soc_error_range = nocur_voltbl.chg_soc_error_range;
+	  if(chg != 1){
+			  //discharge state before check 
+				len       = nocur_voltbl.dchg_len;
+			  vol_table = nocur_voltbl.dchg_vol_table;
+				soc_table = nocur_voltbl.dchg_soc_table;
+	      soc_error_range = nocur_voltbl.dchg_soc_error_range;
+		}
+	  
+	  uint8_t index = BiSearch(vol_table, len, vol);
+		if(index == 0 || vol == vol_table[len - 1]){
+				SOC_vol_estimate = soc_table[index];
+		}else{
+			if(vol - vol_table[index] <= vol_table[index + 1] - vol){
+					SOC_vol_estimate = soc_table[index];
+			}else{
+					SOC_vol_estimate = soc_table[index + 1];
+			}				
+		}
+	  if(abs_value(SOC_vol_estimate - EESOC) >= soc_error_range[index]){    
+			if(index < len - 1){
+			    float ratio = ((float)soc_table[index + 1] - soc_table[index])/(vol_table[index + 1] - vol_table[index]);
+				  SOC_vol_estimate = ratio * (vol - vol_table[index]) + soc_table[index];
 			}
 			SOC_vol_estimate = (SOC_vol_estimate < 0)     ? 0   : SOC_vol_estimate; //In case bat vol is less than the least voltage in the  tbl
       SOC_vol_estimate = (SOC_vol_estimate > 100)   ? 100 : SOC_vol_estimate;
@@ -1072,4 +1118,87 @@ void CaliVolRangeCalculate(uint8_t batIndex, uint8_t volIndex, uint8_t* delt_Vol
 			  delt_Vol[1] = 3;
 			}
 		}
+}
+/***************************************************************************************/
+/*SOH PART
+ *///
+/***************************************************************************************/
+void BoxSOHInit(void){
+  Read32Flash(&boxSOH.absCoulombCnter, E2_COULOMB_CNTER_SOH_ADDR);
+	if(boxSOH.absCoulombCnter > CNTER_100AH){
+	  boxSOH.absCoulombCnter = 0;
+	}
+	
+	Read32Flash(&boxSOH.alreadyLost, E2_ALREADY_LOST_SOH_ADDR);
+	if(boxSOH.alreadyLost > TOTAL_LIFE_CAP/10 && boxSOH.alreadyLost != 0xffffffff){
+	  boxSOH.alreadyLost = TOTAL_LIFE_CAP/10;
+	}else if(boxSOH.alreadyLost == 0xffffffff){
+	  boxSOH.alreadyLost = 0;
+	}
+}
+
+void SOHTask(void){
+	uint16_t soh = 0;
+	uint32_t numerator = 0;
+	uint32_t denominator = TOTAL_LIFE_CAP;
+	if(dC < 0){
+	  boxSOH.absCoulombCnter -= dC;
+	}else{
+	  boxSOH.absCoulombCnter += dC;
+	}
+	
+	if(boxSOH.absCoulombCnter >= CNTER_100AH){
+	  boxSOH.absCoulombCnter = 0;
+		boxSOH.alreadyLost++;
+	}
+	numerator = TOTAL_LIFE_CAP - boxSOH.alreadyLost * LEAST_SOH_K;//70%
+	soh = (uint16_t)(((float)numerator/denominator) * 10000);
+  if(soh > 9950){
+		PcPointBuffer[SOH_box] = 10000;
+	}else if(soh < 7000){
+	  PcPointBuffer[SOH_box] = 7000;
+	}else{
+	  PcPointBuffer[SOH_box] = soh;
+	}
+}
+/***************************************************************************************/
+/* chg&dchg hysteresis PART
+ *///
+/***************************************************************************************/
+void HysteresisInit(void){
+  Read32Flash(&chgdchgStatus.hysteresisStatus, E2_HYSTERESIS_ADDR);
+	if(chgdchgStatus.hysteresisStatus < DCHG_VALUE || chgdchgStatus.hysteresisStatus > CHG_VALUE){
+	  chgdchgStatus.hysteresisStatus = CHG_VALUE;
+		chgdchgStatus.hysteresisCnter = HYSTERESIS_CNTER;
+	}else if(chgdchgStatus.hysteresisStatus >= DCHG_VALUE && chgdchgStatus.hysteresisStatus < 15){
+	  chgdchgStatus.hysteresisStatus = DCHG_VALUE;
+		chgdchgStatus.hysteresisCnter = 0;
+	}else{
+	 chgdchgStatus.hysteresisStatus = CHG_VALUE;
+	 chgdchgStatus.hysteresisCnter = HYSTERESIS_CNTER;
+	}
+}
+
+void HysteresisTask(void){
+    if(dC > 0){
+            //Discahrge
+			      uint32_t delt_dC = dC * HYSTERESIS_K;
+            if(chgdchgStatus.hysteresisCnter > delt_dC){
+                chgdchgStatus.hysteresisCnter -= delt_dC;
+            }else{
+                //Still remain 
+                chgdchgStatus.hysteresisCnter = 0;
+            }
+    }else{
+            //Charge
+            if(chgdchgStatus.hysteresisCnter < (HYSTERESIS_CNTER + dC)){
+                chgdchgStatus.hysteresisCnter -= dC;
+            }else{
+                //Still space left
+                chgdchgStatus.hysteresisCnter = HYSTERESIS_CNTER;
+            }
+    }
+		
+		chgdchgStatus.hysteresisStatus = (10*chgdchgStatus.hysteresisCnter)/HYSTERESIS_CNTER + 10;
+		PcPointBuffer[resis_cell1] = chgdchgStatus.hysteresisStatus;
 }

@@ -46,10 +46,15 @@ typedef const struct {
 } BatPackBasicInfo;
 
 typedef struct {
-  const uint8_t  len;
-	const uint16_t* vol_table;
-	const uint8_t*  soc_table;
-	const uint8_t*  soc_error_range;
+  const uint8_t   chg_len;
+	const uint16_t* chg_vol_table;
+	const uint8_t*  chg_soc_table;
+	const uint8_t*  chg_soc_error_range;
+	
+	const uint8_t   dchg_len;
+	const uint16_t* dchg_vol_table;
+	const uint8_t*  dchg_soc_table;
+	const uint8_t*  dchg_soc_error_range;
 } NoCurVolTable;
 
 

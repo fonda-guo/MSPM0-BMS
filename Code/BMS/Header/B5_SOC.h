@@ -44,9 +44,9 @@
 //---------------------------------------------------------------------------
 //basic parameter
 #define MAX_BAT_CAP          126000000  //350Ah 350*10*3600*10(*100ms)
-#define NOMINAL_BAT_CAP      118800000  //330Ah 330*10*3600*10(*100ms)
-#define BAT_CAP_NINTY_PER    106920000  //NOMINAL_BAT_CAP*0.9
-#define BAT_CAP_QUARTER      29700000   //NOMINAL_BAT_CAP*0.25
+#define NOMINAL_BAT_CAP      115200000  //320Ah 320*10*3600*10(*100ms)
+#define BAT_CAP_NINTY_PER    103680000  //NOMINAL_BAT_CAP*0.9
+#define BAT_CAP_QUARTER      28800000   //NOMINAL_BAT_CAP*0.25
 	
 #define MAX_SOC              10000      //100*100
 #define MAX_SOH              10000      //100*100
@@ -96,12 +96,26 @@
 #define CYCLE_CALIB_ENABLE         0x0008
 #define BOXCAP_REAL_TIME_UPDATE    0x0010
 #define CYCLE_WRITE_EE             (REACH_BAT_LOWER_BOUND|\
-                                    REACH_BAT_UPPER_BOUND)
+                                    REACH_BAT_UPPER_BOUND)															
+//SOH
+#define TOTAL_LIFE_CAP             588800     //9200*330/100 * 10
+#define CNTER_100AH                36000000   //100*10*3600*10
+#define LEAST_SOH_K                3          //means 70%~  1-0.7
+
+//Hysteresis
+#define CHG_VALUE                  20
+#define DCHG_VALUE                 10
+#define HYSTERESIS_CNTER           7128000
+#define HYSTERESIS_K               2
+
 //Flash address(use EE in the formal version)
 #define E2_COULOMBTOTAL_ADDR            (0x00006000 + 0x400)                 //Next sector to prevent from being erased
 #define E2_BOXSOCCAL_ADDR               (E2_COULOMBTOTAL_ADDR + 8)
 #define E2_SINGLEBATCOULOMBTOTAL_ADDR   (E2_BOXSOCCAL_ADDR + 8)
 #define E2_SINGLE_BAT_SOC_ADDR          (E2_SINGLEBATCOULOMBTOTAL_ADDR + 8)//8*8
+#define E2_COULOMB_CNTER_SOH_ADDR       (E2_SINGLE_BAT_SOC_ADDR + 64)
+#define E2_ALREADY_LOST_SOH_ADDR        (E2_COULOMB_CNTER_SOH_ADDR + 8)
+#define E2_HYSTERESIS_ADDR              (E2_ALREADY_LOST_SOH_ADDR + 8)
 
 //Check and protect
 #define BOX_COULOMBTOTAL_FAULT       0x0001
@@ -121,8 +135,8 @@ typedef struct{
     int16_t  MaxBatTemp;
     int16_t  MinBatTemp;
 
-    uint32_t MaxBatSOC;
-    uint32_t MinBatSOC;
+    uint32_t MaxBatSOC;  //0 ~ MAX_BAT_CAP
+    uint32_t MinBatSOC;  //0 ~ MAX_BAT_CAP
 
     uint32_t SingleBatCoulombTotal;
     uint32_t DataCheck;
@@ -165,8 +179,15 @@ typedef struct{
 }CellBalance;
 
 typedef struct{
+	  uint32_t absCoulombCnter;
+	  uint32_t alreadyLost;
+    uint32_t totalLifeCap;
+}BOXSOH;
+
+typedef struct{
     uint8_t status;
-	  uint8_t hysteresisStatus;
+	  uint32_t hysteresisStatus; //10~20
+	  uint32_t hysteresisCnter;
 }ChgDchgStatus;
 
 //---------------------------------------------------------------------------
@@ -179,6 +200,7 @@ EXTERN CellResistance   cellR;
 EXTERN CellBalance      cellBalance;
 EXTERN uint32_t         BMSFaultBit;
 EXTERN ChgDchgStatus    chgdchgStatus;
+EXTERN BOXSOH           boxSOH;
 
 //---------------------------------------------------------------------------
 // Public functions prototypes
@@ -226,5 +248,13 @@ EXTERN uint16_t CaliKChooseBasedOnSOC(uint8_t batIndex, uint8_t volIndex, int16_
 EXTERN void CaliVolRangeCalculate(uint8_t batIndex, uint8_t volIndex, uint8_t* delt_Vol, int16_t I);
 EXTERN void SingleBatSOCCalVolCaliCal(uint8_t batIndex, uint16_t k_cali);
 EXTERN void BoxSOCCalVolCaliCal(void);
+
+//SOH
+EXTERN void SOHTask(void);
+EXTERN void BoxSOHInit(void);
+
+//Hysteresis
+EXTERN void HysteresisInit(void);
+EXTERN void HysteresisTask(void);
 #undef EXTERN
 #endif
