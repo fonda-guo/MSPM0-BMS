@@ -44,9 +44,10 @@
 //---------------------------------------------------------------------------
 //basic parameter
 #define MAX_BAT_CAP          126000000  //350Ah 350*10*3600*10(*100ms)
-#define NOMINAL_BAT_CAP      115200000  //320Ah 320*10*3600*10(*100ms)
-#define BAT_CAP_NINTY_PER    103680000  //NOMINAL_BAT_CAP*0.9
-#define BAT_CAP_QUARTER      28800000   //NOMINAL_BAT_CAP*0.25
+#define NOMINAL_BAT_CAP      118800000  //330Ah 330*10*3600*10(*100ms)
+#define BAT_CAP_NINTY_PER    106920000  //NOMINAL_BAT_CAP*0.9
+#define BAT_CAP_FOURTY_PER   47520000   //NOMINAL_BAT_CAP*0.4
+#define BAT_CAP_QUARTER      29700000   //NOMINAL_BAT_CAP*0.25
 	
 #define MAX_SOC              10000      //100*100
 #define MAX_SOH              10000      //100*100

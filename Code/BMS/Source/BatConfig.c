@@ -58,9 +58,9 @@ const uint16_t (*Cali_T_Vol_tbl[CALI_T_NUM])[CALI_POINT_NUM]	 = {Cali_T0_vol_tbl
 //---------------------------------------------------------------------------	
 BatPackBasicInfo packInfo = {
     .cellIndex             = {Cell1Voltage, Cell2Voltage, Cell3Voltage, Cell4Voltage, Cell5Voltage, Cell6Voltage, Cell15Voltage, Cell16Voltage},
-		.thermistorPinIndex    = {ALERTPinConfig, CFETOFFPinConfig, TS3Config, HDQPinConfig},
-		.notUsedPinIndex       = {TS1Config, TS2Config, DFETOFFPinConfig, DCHGPinConfig, DDSGPinConfig},
-		.thermistorReadCommond = {CFETOFFTemperature, ALERTTemperature, TS3Temperature, HDQTemperature},
+		.thermistorPinIndex    = {TS1Config, CFETOFFPinConfig, TS3Config, HDQPinConfig},
+		.notUsedPinIndex       = {TS2Config, DFETOFFPinConfig, DCHGPinConfig, DDSGPinConfig},//will be set to 0x0000
+		.thermistorReadCommond = {CFETOFFTemperature, TS1Temperature, TS3Temperature, HDQTemperature},
 		.Tmap_ther2bat         = {ts1,ts1,ts2,ts2,ts3,ts3,ts4,ts4},
 		.CUVvol = 0x31,//2479 mV CUV Threshold is this value multiplied by 50.6mV
 		.COVvol = 0x4B,//3800 mV COV Threshold is this value multiplied by 50.6mV;

@@ -252,6 +252,9 @@ void BMSCalTask(void){
  *///
 /***************************************************************************************/
 void BMSSingleBatVolCheck(void){
+	  //ADC is wrong
+	  if(PcPointBuffer[maxcellvol] > 4000) return;
+	  if(PcPointBuffer[mincellvol] < 2000) return;
 
     if(PcPointBuffer[maxcellvol] >= VOL_UPPER_BOUND){
         boxBMS.status |= REACH_BAT_UPPER_BOUND;
@@ -276,19 +279,27 @@ void BMSCoulombTotalFinalUpdate(void){
     if((boxBMS.status & CYCLE_WRITE_EE) == 0)     return;
  
 	  if((boxBMS.status & REACH_BAT_UPPER_BOUND) != 0){
-		    boxBMS.BoxCoulombCounterCali -= (boxBMS.BoxCoulombTotal - boxBMS.BoxCoulombCounter);
-			  boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
+			  int32_t finalCali = boxBMS.BoxCoulombTotal - boxBMS.BoxCoulombCounter;
+		    //boxBMS.BoxCoulombCounterCali -= (boxBMS.BoxCoulombTotal - boxBMS.BoxCoulombCounter);
+			  if(finalCali > 0 && finalCali <= BAT_CAP_FOURTY_PER){
+					//calibration is in a resonable range
+				  boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
+				}
 			  boxInfo.SingleBatCoulombTotal = boxBMS.BoxCoulombTotal;//to be done
 			  boxBMS.BoxCoulombCounter = boxBMS.BoxCoulombTotal; //make sure SOC is full, do this after calibrating the SOH
 			  SingleBatSOCCoulombFull();
 			  boxBMS.BoxSOCCal = boxBMS.BoxCoulombTotal;
 		}
 	  if((boxBMS.status & REACH_BAT_LOWER_BOUND) != 0){
-			  boxBMS.BoxCoulombCounterCali -= boxBMS.BoxCoulombCounter;
+			  int32_t finalCali = -boxBMS.BoxCoulombCounter;
+			  //boxBMS.BoxCoulombCounterCali -= boxBMS.BoxCoulombCounter;
         boxBMS.BoxCoulombCounter = 0;
 			  boxBMS.BoxSOCCal = 0;
         SingleBatSOCCoulombClear();
-			  boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
+			  if(finalCali < 0 && finalCali >= -BAT_CAP_FOURTY_PER){
+					  //calibration is in a resonable range
+				    boxBMS.BoxCoulombTotal += boxBMS.BoxCoulombCounterCali;
+				}			  
         boxInfo.SingleBatCoulombTotal = boxBMS.BoxCoulombTotal;//to be done
 		}
     boxBMS.status &= (~CYCLE_WRITE_EE);//only success write can clear the bit, or do this task again
@@ -812,7 +823,8 @@ void SingleBatSOCCalVolCaliCal(uint8_t batIndex, uint16_t k_cali){
         }
     }
 
-    if(boxInfo.SingleBatCoulombTotal == 0){
+    if(boxInfo.SingleBatCoulombTotal == 0 || batBMS[batIndex].BatSOCCal > boxInfo.SingleBatCoulombTotal){
+			//sth is wrong
         PcPointBuffer[BatCommPoint[batIndex]] = 1234;
     }else{
         PcPointBuffer[BatCommPoint[batIndex]] = (uint16_t)(((float)batBMS[batIndex].BatSOCCal/boxInfo.SingleBatCoulombTotal) * 10000);

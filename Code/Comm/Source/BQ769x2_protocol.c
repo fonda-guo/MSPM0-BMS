@@ -393,7 +393,7 @@ float BQ769x2_ReadTemperature(uint8_t command)
 void BQ769x2_ReadAllTemperatures()
 {
     Temperature[0] = BQ769x2_ReadTemperature(CFETOFFTemperature);
-    Temperature[1] = BQ769x2_ReadTemperature(ALERTTemperature);
+    Temperature[1] = BQ769x2_ReadTemperature(TS1Temperature);
     Temperature[2] = BQ769x2_ReadTemperature(TS3Temperature);
 	  Temperature[3] = BQ769x2_ReadTemperature(HDQTemperature);
 }
