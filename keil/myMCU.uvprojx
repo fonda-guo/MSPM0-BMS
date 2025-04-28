@@ -454,6 +454,16 @@
               <FileType>5</FileType>
               <FilePath>..\Code\Comm\Header\PC_protocol.h</FilePath>
             </File>
+            <File>
+              <FileName>MT9818_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MT9818_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>MT9818_protocol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MT9818_protocol.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

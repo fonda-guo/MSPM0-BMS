@@ -62,7 +62,7 @@ BatPackBasicInfo packInfo = {
 		.notUsedPinIndex       = {TS2Config, DFETOFFPinConfig, DCHGPinConfig, DDSGPinConfig},//will be set to 0x0000
 		.thermistorReadCommond = {CFETOFFTemperature, TS1Temperature, TS3Temperature, HDQTemperature},
 		.Tmap_ther2bat         = {ts1,ts1,ts2,ts2,ts3,ts3,ts4,ts4},
-		.CUVvol = 0x31,//2479 mV CUV Threshold is this value multiplied by 50.6mV
+		.CUVvol = 0x27,//1973 mV CUV Threshold is this value multiplied by 50.6mV;
 		.COVvol = 0x4B,//3800 mV COV Threshold is this value multiplied by 50.6mV;
 		
 		//CB

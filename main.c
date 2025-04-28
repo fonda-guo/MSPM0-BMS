@@ -1,6 +1,7 @@
 #include "ti_msp_dl_config.h"
 #include "PC_protocol.h"
 #include "BQ769x2_protocol.h"
+#include "MT9818_protocol.h"
 #include "DataProcess.h"
 #include "FaultProtect.h"
 #include "B5_SOC.h"
@@ -29,12 +30,14 @@ int main(void)
 	  DL_FlashCTL_unprotectSector(FLASHCTL, SW_VER_ADDRESS, DL_FLASHCTL_REGION_SELECT_MAIN);
     DL_FlashCTL_programMemory32WithECCGenerated(FLASHCTL, SW_VER_ADDRESS, &SW_VER);
 	  
-	  BQ769x2_Init(&packInfo);
-	
+	  //test
+	  //BQ769x2_Init(&packInfo);
+	  MT9818_Parameter_Init();
+		
     delayMS(1);
-	  CommandSubcommands(FET_ENABLE); // Enable the CHG and DSG FETs
+	  //CommandSubcommands(FET_ENABLE); // Enable the CHG and DSG FETs
 	  delayMS(1);
-	  CommandSubcommands(SLEEP_DISABLE); // Sleep mode is enabled by default. For this example, Sleep is disabled to 
+	  //CommandSubcommands(SLEEP_DISABLE); // Sleep mode is enabled by default. For this example, Sleep is disabled to 
 									                     // demonstrate full-speed measurements in Normal mode.
     PC_protocol_init();
     
@@ -48,12 +51,15 @@ int main(void)
 			
 			DL_GPIO_togglePins(GPIO_LED_PORT,GPIO_LED_USER_LED_2B_PIN);
 			
-			BQDataGet();
+			//test
+			//BQDataGet();
+			Get_All_Vol();
 			
 			//Check if battery voltage reaches the threshold
       BMSSingleBatVolCheck();
 			
-			FaultDetect();
+			//test
+			//FaultDetect();
 			
 			
 			if(UART_Fault){

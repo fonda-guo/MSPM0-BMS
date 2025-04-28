@@ -161,3 +161,138 @@ void I2C_ReadReg(uint8_t reg_addr, volatile uint8_t *reg_data, uint8_t count)
 //            break;
 //    }
 //}
+
+
+//***************************************************************************//
+//
+//            Functions of MT9818
+//
+//***************************************************************************//
+uint8_t MT9818_CRC8(uint8_t *ptr, uint8_t len,uint8_t key) 
+{
+	uint8_t i;
+	uint8_t crc=0;
+	while(len--!=0)
+	{
+		for(i=0x80; i!=0; i/=2)
+		{
+			if((crc & 0x80) != 0)
+			{
+				crc *= 2;
+				crc ^= key;
+			}
+			else
+				crc *= 2;
+
+			if((*ptr & i)!=0)
+				crc ^= key;
+		}
+		ptr++;
+	}
+	return(crc);
+}
+
+
+
+void I2C_WriteBreq_MsgSBS(uint8_t RegAdd, uint8_t data)  
+{
+	uint8_t crc=0;
+	uint8_t buff[4];
+	
+	buff[0]=(I2C_TARGET_ADDRESS<<1);
+	buff[1]=RegAdd;
+	buff[2]=data;
+	crc = MT9818_CRC8(buff,3,7);
+	buff[3]=crc;
+	
+	DL_I2C_fillControllerTXFIFO(I2C_0_INST, &buff[1], 3);
+	
+	/* Wait for I2C to be Idle */
+    while (!(DL_I2C_getControllerStatus(I2C_0_INST) &
+             DL_I2C_CONTROLLER_STATUS_IDLE))
+        ;
+
+    DL_I2C_startControllerTransfer(I2C_0_INST, I2C_TARGET_ADDRESS,
+        DL_I2C_CONTROLLER_DIRECTION_TX, 3);
+
+    while (DL_I2C_getControllerStatus(I2C_0_INST) &
+           DL_I2C_CONTROLLER_STATUS_BUSY_BUS)
+        ;
+    /* Wait for I2C to be Idle */
+    while (!(DL_I2C_getControllerStatus(I2C_0_INST) &
+             DL_I2C_CONTROLLER_STATUS_IDLE))
+        ;
+    DL_I2C_flushControllerTXFIFO(I2C_0_INST);
+}
+
+
+uint8_t I2C_GetRead_MsgSBS(uint8_t RegAdd) 
+{
+	uint8_t rec_data = 0,rec_crc = 0;
+	uint8_t reg_data[2];
+	uint8_t crc_buffer[2];
+	uint8_t crc_result = 0;
+	uint8_t noresponse = 0;
+	static uint8_t error_count = 0;
+	
+	DL_I2C_fillControllerTXFIFO(I2C_0_INST, &RegAdd, 1);
+
+    /* Wait for I2C to be Idle */
+    while (!(DL_I2C_getControllerStatus(I2C_0_INST) &
+             DL_I2C_CONTROLLER_STATUS_IDLE))
+        ;
+
+    DL_I2C_startControllerTransfer(
+        I2C_0_INST, I2C_TARGET_ADDRESS, DL_I2C_CONTROLLER_DIRECTION_TX, 1);
+
+    while (DL_I2C_getControllerStatus(I2C_0_INST) &
+           DL_I2C_CONTROLLER_STATUS_BUSY_BUS)
+        ;
+    /* Wait for I2C to be Idle */
+    while (!(DL_I2C_getControllerStatus(I2C_0_INST) &
+             DL_I2C_CONTROLLER_STATUS_IDLE))
+        ;
+
+    DL_I2C_flushControllerTXFIFO(I2C_0_INST);
+
+    /* Send a read request to Target */
+    DL_I2C_startControllerTransfer(
+        I2C_0_INST, I2C_TARGET_ADDRESS, DL_I2C_CONTROLLER_DIRECTION_RX, 2);
+
+		for (uint8_t i = 0; i < 2; i++) {
+        while (DL_I2C_isControllerRXFIFOEmpty(I2C_0_INST) && (noresponse <= 40)){
+					delayUS(80);
+					noresponse++;
+				}
+				if(noresponse > 40){
+				  I2C_dead = 1;
+					noresponse = 0;
+					break;
+				}else{
+					noresponse = 0;
+					I2C_dead = 0;
+          reg_data[i] = DL_I2C_receiveControllerData(I2C_0_INST);
+				}
+    }
+
+	rec_data = reg_data[0];
+	rec_crc = reg_data[1];
+
+	
+	crc_buffer[0] = I2C_TARGET_ADDRESS;
+	crc_buffer[1] = rec_data;
+	crc_result = MT9818_CRC8(crc_buffer,2,7);	
+	if (crc_result != rec_crc)
+	{
+		error_count++;
+		if (error_count >= 10)
+		{
+			error_count = 0;
+		}
+	}	
+	
+	return rec_data;
+}
+
+
+

@@ -1,4 +1,5 @@
-../objects/main.o: ..\main.c ..\keil\ti_msp_dl_config.h \
+../objects/mt9818_protocol.o: MT9818_protocol.c MT9818_protocol.h \
+  ..\Code\Comm\Header\I2C_comm.h ..\Code\BSW\Header\myMCUCommBSW.h \
   ..\..\test1\ti\devices\msp\msp.h ..\..\test1\ti\devices\DeviceFamily.h \
   ..\..\test1\ti\devices\msp\m0p\mspm0g350x.h \
   ..\Core\Include\core_cm0plus.h \
@@ -64,9 +65,4 @@
   ..\..\test1\ti\driverlib\dl_vref.h ..\..\test1\ti\driverlib\dl_wwdt.h \
   ..\..\test1\ti\driverlib\m0p\dl_interrupt.h \
   ..\..\test1\ti\driverlib\m0p\dl_systick.h \
-  ..\Code\Comm\Header\PC_protocol.h ..\Code\BSW\Header\myMCUCommBSW.h \
-  ..\..\test1\ti\iqmath\include\IQmathLib.h \
-  ..\Code\Comm\Header\UART_comm.h ..\Code\Comm\Header\BQ769x2_protocol.h \
-  ..\Code\BMS\Header\BatConfig.h ..\Code\Comm\Header\I2C_comm.h \
-  ..\keil\MT9818_protocol.h ..\Code\App\Header\DataProcess.h \
-  ..\Code\BMS\Header\B5_SOC.h ..\Code\App\Header\FaultProtect.h
+  ..\..\test1\ti\iqmath\include\IQmathLib.h ..\keil\ti_msp_dl_config.h

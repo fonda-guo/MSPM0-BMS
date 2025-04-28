@@ -39,5 +39,9 @@ extern I2cControllerStatus_t gI2cControllerStatus;
 
 void I2C_WriteReg(uint8_t reg_addr, uint8_t *reg_data, uint8_t count);
 void I2C_ReadReg(uint8_t reg_addr, volatile uint8_t *reg_data, uint8_t count);
+//MT9818
+uint8_t MT9818_CRC8(uint8_t *ptr, uint8_t len,uint8_t key);
+void I2C_WriteBreq_MsgSBS(uint8_t RegAdd, uint8_t data);
+uint8_t I2C_GetRead_MsgSBS(uint8_t RegAdd);
 
 #endif
