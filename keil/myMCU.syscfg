@@ -11,8 +11,11 @@
  */
 const GPIO          = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const GPIO1         = GPIO.addInstance();
+const GPIO2         = GPIO.addInstance();
 const I2C           = scripting.addModule("/ti/driverlib/I2C", {}, false);
 const I2C1          = I2C.addInstance();
+const SPI           = scripting.addModule("/ti/driverlib/SPI", {}, false);
+const SPI1          = SPI.addInstance();
 const SYSCTL        = scripting.addModule("/ti/driverlib/SYSCTL");
 const TIMER         = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1        = TIMER.addInstance();
@@ -49,6 +52,11 @@ GPIO1.associatedPins[0].assignedPin  = "22";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
+GPIO2.$name                          = "GPIO_CS";
+GPIO2.associatedPins[0].assignedPort = "PORTB";
+GPIO2.associatedPins[0].assignedPin  = "6";
+GPIO2.associatedPins[0].$name        = "PIN_CS";
+
 I2C1.$name                     = "I2C_0";
 I2C1.basicEnableController     = true;
 I2C1.advControllerTXFIFOTRIG   = "BYTES_1";
@@ -58,6 +66,19 @@ I2C1.peripheral.sdaPin.$assign = "PB3";
 I2C1.peripheral.sclPin.$assign = "PB2";
 I2C1.sdaPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
 I2C1.sclPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
+
+SPI1.$name                      = "SPI_0";
+SPI1.polarity                   = "1";
+SPI1.phase                      = "1";
+SPI1.frameFormat                = "MOTO3";
+SPI1.targetBitRate              = 800000;
+SPI1.peripheral.$assign         = "SPI1";
+SPI1.peripheral.sclkPin.$assign = "PB9";
+SPI1.peripheral.mosiPin.$assign = "PB8";
+SPI1.peripheral.misoPin.$assign = "PB7";
+SPI1.sclkPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric4";
+SPI1.mosiPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric5";
+SPI1.misoPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric6";
 
 SYSCTL.forceDefaultClkConfig = true;
 SYSCTL.MFCLKEn               = true;
@@ -102,5 +123,6 @@ GPIO1.associatedPins[0].pin.$suggestSolution     = "PB22";
 Board.peripheral.$suggestSolution                = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution       = "PA20";
 Board.peripheral.swdioPin.$suggestSolution       = "PA19";
+GPIO2.associatedPins[0].pin.$suggestSolution     = "PB6";
 TIMER1.peripheral.$suggestSolution               = "TIMA0";
 UART1.DMA_CHANNEL_RX.peripheral.$suggestSolution = "DMA_CH0";

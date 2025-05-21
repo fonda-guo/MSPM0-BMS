@@ -1,5 +1,7 @@
-#include "I2C_comm.h"
+#ifndef MT9818_PROTOCOL_H_
+#define MT9818_PROTOCOL_H_
 
+#include "I2C_comm.h"
 #define	SYS_STAT_REG			0x00
 #define	SYS_CTRL1_REG			0x04
 #define	SYS_CTRL2_REG			0x05
@@ -137,3 +139,4 @@ float Get_BAT_ADC_GAIN(void);
 float Get_BAT_ADC_GAIN1(void);
 float Get_BAT_ADC_GAIN2(void);
 float Get_BAT_ADC_GAIN3(void);
+#endif

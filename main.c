@@ -2,13 +2,13 @@
 #include "PC_protocol.h"
 #include "BQ769x2_protocol.h"
 #include "MT9818_protocol.h"
+#include "MT9805_protocol.h"
 #include "DataProcess.h"
 #include "FaultProtect.h"
 #include "B5_SOC.h"
 
 #define SW_VER_ADDRESS (0x00006000)
 uint32_t SW_VER = 0x25022001;
-
 
 int main(void)
 {
@@ -32,8 +32,9 @@ int main(void)
 	  
 	  //test
 	  //BQ769x2_Init(&packInfo);
-	  MT9818_Parameter_Init();
-		
+	  //MT9818_Parameter_Init();
+		//MT9805_GlobeVaribleInit();
+		MT9805_Init();
     delayMS(1);
 	  //CommandSubcommands(FET_ENABLE); // Enable the CHG and DSG FETs
 	  delayMS(1);
@@ -47,14 +48,16 @@ int main(void)
 		
 		BMSInit();
 		
+		SPI_CS_HIGH();
     while (1) {
 			
 			DL_GPIO_togglePins(GPIO_LED_PORT,GPIO_LED_USER_LED_2B_PIN);
 			
 			//test
 			//BQDataGet();
-			Get_All_Vol();
-			
+			Get_Volt();
+			Get_Temp();
+			//testfunc();
 			//Check if battery voltage reaches the threshold
       BMSSingleBatVolCheck();
 			

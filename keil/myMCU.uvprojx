@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>3</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -463,6 +463,26 @@
               <FileName>MT9818_protocol.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\MT9818_protocol.h</FilePath>
+            </File>
+            <File>
+              <FileName>SPI_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SPI_comm.c</FilePath>
+            </File>
+            <File>
+              <FileName>SPI_comm.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SPI_comm.h</FilePath>
+            </File>
+            <File>
+              <FileName>MT9805_protocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MT9805_protocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>MT9805_protocol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MT9805_protocol.h</FilePath>
             </File>
           </Files>
         </Group>

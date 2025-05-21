@@ -41,6 +41,7 @@
 #include "ti_msp_dl_config.h"
 
 DL_TimerA_backupConfig gTIMERBackup;
+DL_SPI_backupConfig gSPI_0Backup;
 
 /*
  *  ======== SYSCFG_DL_init ========
@@ -55,11 +56,13 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_TIMER_init();
     SYSCFG_DL_I2C_0_init();
     SYSCFG_DL_UART_0_init();
+    SYSCFG_DL_SPI_0_init();
     SYSCFG_DL_DMA_init();
     SYSCFG_DL_SYSCTL_CLK_init();
     /* Ensure backup structures have no valid state */
 	gTIMERBackup.backupRdy 	= false;
 
+	gSPI_0Backup.backupRdy 	= false;
 
 }
 /*
@@ -71,6 +74,7 @@ SYSCONFIG_WEAK bool SYSCFG_DL_saveConfiguration(void)
     bool retStatus = true;
 
 	retStatus &= DL_TimerA_saveConfiguration(TIMER_INST, &gTIMERBackup);
+	retStatus &= DL_SPI_saveConfiguration(SPI_0_INST, &gSPI_0Backup);
 
     return retStatus;
 }
@@ -81,6 +85,7 @@ SYSCONFIG_WEAK bool SYSCFG_DL_restoreConfiguration(void)
     bool retStatus = true;
 
 	retStatus &= DL_TimerA_restoreConfiguration(TIMER_INST, &gTIMERBackup, false);
+	retStatus &= DL_SPI_restoreConfiguration(SPI_0_INST, &gSPI_0Backup);
 
     return retStatus;
 }
@@ -92,6 +97,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerA_reset(TIMER_INST);
     DL_I2C_reset(I2C_0_INST);
     DL_UART_Main_reset(UART_0_INST);
+    DL_SPI_reset(SPI_0_INST);
 
 
     DL_GPIO_enablePower(GPIOA);
@@ -99,6 +105,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerA_enablePower(TIMER_INST);
     DL_I2C_enablePower(I2C_0_INST);
     DL_UART_Main_enablePower(UART_0_INST);
+    DL_SPI_enablePower(SPI_0_INST);
 
     delay_cycles(POWER_STARTUP_DELAY);
 }
@@ -125,10 +132,21 @@ SYSCONFIG_WEAK void SYSCFG_DL_GPIO_init(void)
     DL_GPIO_initPeripheralInputFunction(
         GPIO_UART_0_IOMUX_RX, GPIO_UART_0_IOMUX_RX_FUNC);
 
+    DL_GPIO_initPeripheralOutputFunction(
+        GPIO_SPI_0_IOMUX_SCLK, GPIO_SPI_0_IOMUX_SCLK_FUNC);
+    DL_GPIO_initPeripheralOutputFunction(
+        GPIO_SPI_0_IOMUX_PICO, GPIO_SPI_0_IOMUX_PICO_FUNC);
+    DL_GPIO_initPeripheralInputFunction(
+        GPIO_SPI_0_IOMUX_POCI, GPIO_SPI_0_IOMUX_POCI_FUNC);
+
     DL_GPIO_initDigitalOutput(GPIO_LED_USER_LED_2B_IOMUX);
 
-    DL_GPIO_clearPins(GPIO_LED_PORT, GPIO_LED_USER_LED_2B_PIN);
-    DL_GPIO_enableOutput(GPIO_LED_PORT, GPIO_LED_USER_LED_2B_PIN);
+    DL_GPIO_initDigitalOutput(GPIO_CS_PIN_CS_IOMUX);
+
+    DL_GPIO_clearPins(GPIOB, GPIO_LED_USER_LED_2B_PIN |
+		GPIO_CS_PIN_CS_PIN);
+    DL_GPIO_enableOutput(GPIOB, GPIO_LED_USER_LED_2B_PIN |
+		GPIO_CS_PIN_CS_PIN);
 
 }
 
@@ -278,6 +296,38 @@ SYSCONFIG_WEAK void SYSCFG_DL_UART_0_init(void)
     DL_UART_Main_setTXFIFOThreshold(UART_0_INST, DL_UART_TX_FIFO_LEVEL_1_2_EMPTY);
 
     DL_UART_Main_enable(UART_0_INST);
+}
+
+static const DL_SPI_Config gSPI_0_config = {
+    .mode        = DL_SPI_MODE_CONTROLLER,
+    .frameFormat = DL_SPI_FRAME_FORMAT_MOTO3_POL1_PHA1,
+    .parity      = DL_SPI_PARITY_NONE,
+    .dataSize    = DL_SPI_DATA_SIZE_8,
+    .bitOrder    = DL_SPI_BIT_ORDER_MSB_FIRST,
+};
+
+static const DL_SPI_ClockConfig gSPI_0_clockConfig = {
+    .clockSel    = DL_SPI_CLOCK_BUSCLK,
+    .divideRatio = DL_SPI_CLOCK_DIVIDE_RATIO_1
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_SPI_0_init(void) {
+    DL_SPI_setClockConfig(SPI_0_INST, (DL_SPI_ClockConfig *) &gSPI_0_clockConfig);
+
+    DL_SPI_init(SPI_0_INST, (DL_SPI_Config *) &gSPI_0_config);
+
+    /* Configure Controller mode */
+    /*
+     * Set the bit rate clock divider to generate the serial output clock
+     *     outputBitRate = (spiInputClock) / ((1 + SCR) * 2)
+     *     800000 = (32000000)/((1 + 19) * 2)
+     */
+    DL_SPI_setBitRateSerialClockDivider(SPI_0_INST, 19);
+    /* Set RX and TX FIFO threshold levels */
+    DL_SPI_setFIFOThreshold(SPI_0_INST, DL_SPI_RX_FIFO_LEVEL_1_2_FULL, DL_SPI_TX_FIFO_LEVEL_1_2_EMPTY);
+
+    /* Enable module */
+    DL_SPI_enable(SPI_0_INST);
 }
 
 static const DL_DMA_Config gDMA_CH0Config = {

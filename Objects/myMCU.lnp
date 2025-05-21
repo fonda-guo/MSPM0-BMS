@@ -7,6 +7,8 @@
 "..\objects\uart_comm.o"
 "..\objects\pc_protocol.o"
 "..\objects\mt9818_protocol.o"
+"..\objects\spi_comm.o"
+"..\objects\mt9805_protocol.o"
 "..\objects\mymcucommbsw.o"
 "..\objects\dataprocess.o"
 "..\objects\faultprotect.o"

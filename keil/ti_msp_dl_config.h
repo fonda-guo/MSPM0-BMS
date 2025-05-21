@@ -126,6 +126,25 @@ extern "C" {
 
 
 
+/* Defines for SPI_0 */
+#define SPI_0_INST                                                         SPI1
+#define SPI_0_INST_IRQHandler                                   SPI1_IRQHandler
+#define SPI_0_INST_INT_IRQN                                       SPI1_INT_IRQn
+#define GPIO_SPI_0_PICO_PORT                                              GPIOB
+#define GPIO_SPI_0_PICO_PIN                                       DL_GPIO_PIN_8
+#define GPIO_SPI_0_IOMUX_PICO                                   (IOMUX_PINCM25)
+#define GPIO_SPI_0_IOMUX_PICO_FUNC                   IOMUX_PINCM25_PF_SPI1_PICO
+#define GPIO_SPI_0_POCI_PORT                                              GPIOB
+#define GPIO_SPI_0_POCI_PIN                                       DL_GPIO_PIN_7
+#define GPIO_SPI_0_IOMUX_POCI                                   (IOMUX_PINCM24)
+#define GPIO_SPI_0_IOMUX_POCI_FUNC                   IOMUX_PINCM24_PF_SPI1_POCI
+/* GPIO configuration for SPI_0 */
+#define GPIO_SPI_0_SCLK_PORT                                              GPIOB
+#define GPIO_SPI_0_SCLK_PIN                                       DL_GPIO_PIN_9
+#define GPIO_SPI_0_IOMUX_SCLK                                   (IOMUX_PINCM26)
+#define GPIO_SPI_0_IOMUX_SCLK_FUNC                   IOMUX_PINCM26_PF_SPI1_SCLK
+
+
 
 /* Defines for DMA_CH0 */
 #define DMA_CH0_CHAN_ID                                                      (0)
@@ -139,6 +158,12 @@ extern "C" {
 /* Defines for USER_LED_2B: GPIOB.22 with pinCMx 50 on package pin 21 */
 #define GPIO_LED_USER_LED_2B_PIN                                (DL_GPIO_PIN_22)
 #define GPIO_LED_USER_LED_2B_IOMUX                               (IOMUX_PINCM50)
+/* Port definition for Pin Group GPIO_CS */
+#define GPIO_CS_PORT                                                     (GPIOB)
+
+/* Defines for PIN_CS: GPIOB.6 with pinCMx 23 on package pin 58 */
+#define GPIO_CS_PIN_CS_PIN                                       (DL_GPIO_PIN_6)
+#define GPIO_CS_PIN_CS_IOMUX                                     (IOMUX_PINCM23)
 
 /* clang-format on */
 
@@ -150,6 +175,7 @@ void SYSCFG_DL_SYSCTL_CLK_init(void);
 void SYSCFG_DL_TIMER_init(void);
 void SYSCFG_DL_I2C_0_init(void);
 void SYSCFG_DL_UART_0_init(void);
+void SYSCFG_DL_SPI_0_init(void);
 void SYSCFG_DL_DMA_init(void);
 
 

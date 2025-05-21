@@ -1,7 +1,7 @@
 Dependencies for Project 'myMCU', Target 'myMCU': (DO NOT MODIFY !)
 CompilerVersion: 6220000::V6.22::ARMCLANG
-F (.\ti_msp_dl_config.c)(0x67613E9C)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/ti_msp_dl_config.o -MMD)
-I (ti_msp_dl_config.h)(0x6757D9D9)
+F (.\ti_msp_dl_config.c)(0x682A8812)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/ti_msp_dl_config.o -MMD)
+I (ti_msp_dl_config.h)(0x6824441F)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
 I (..\..\test1\ti\devices\DeviceFamily.h)(0x66D136B8)
 I (..\..\test1\ti\devices\msp\m0p\mspm0g350x.h)(0x66D136B8)
@@ -75,11 +75,11 @@ I (..\..\test1\ti\driverlib\dl_vref.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
-F (startup_mspm0g350x_uvision.s)(0x676B74A3)(--target=arm-arm-none-eabi -mcpu=cortex-m0plus -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-Wa,armasm,--pd,"__UVISION_VERSION SETA 541" -Wa,armasm,--pd,"__MSPM0G3507__ SETA 1"-o ../objects/startup_mspm0g350x_uvision.o)
-F (.\ti_msp_dl_config.h)(0x6757D9D9)()
-F (.\myMCU.syscfg)(0x67613E90)(--target=arm-arm-none-eabi -mcpu=cortex-m0plus -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-D__UVISION_VERSION=541 -D__MSPM0G3507__-o ../objects/mymcu.o)
-F (..\main.c)(0x680DA500)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/main.o -MMD)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+F (startup_mspm0g350x_uvision.s)(0x682C1C2B)(--target=arm-arm-none-eabi -mcpu=cortex-m0plus -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-Wa,armasm,--pd,"__UVISION_VERSION SETA 541" -Wa,armasm,--pd,"__MSPM0G3507__ SETA 1"-o ../objects/startup_mspm0g350x_uvision.o)
+F (.\ti_msp_dl_config.h)(0x6824441F)()
+F (.\myMCU.syscfg)(0x682A8809)(--target=arm-arm-none-eabi -mcpu=cortex-m0plus -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-D__UVISION_VERSION=541 -D__MSPM0G3507__-o ../objects/mymcu.o)
+F (..\main.c)(0x682D3C89)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/main.o -MMD)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
 I (..\..\test1\ti\devices\DeviceFamily.h)(0x66D136B8)
 I (..\..\test1\ti\devices\msp\m0p\mspm0g350x.h)(0x66D136B8)
@@ -160,11 +160,13 @@ I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\Comm\Header\BQ769x2_protocol.h)(0x67887701)
 I (..\Code\BMS\Header\BatConfig.h)(0x67DA3B39)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
-I (..\keil\MT9818_protocol.h)(0x680AFF9C)
+I (..\keil\MT9818_protocol.h)(0x681D70A1)
+I (..\keil\MT9805_protocol.h)(0x682C2059)
+I (..\keil\SPI_comm.h)(0x6824448C)
 I (..\Code\App\Header\DataProcess.h)(0x67872E60)
 I (..\Code\BMS\Header\B5_SOC.h)(0x67D938E2)
 I (..\Code\App\Header\FaultProtect.h)(0x674D1D94)
-F (..\Code\Comm\Source\I2C_comm.c)(0x680DBE4A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/i2c_comm.o -MMD)
+F (..\Code\Comm\Source\I2C_comm.c)(0x680DBE4A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/i2c_comm.o -MMD)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
@@ -241,9 +243,9 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 F (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)()
-F (..\Code\Comm\Source\BQ769x2_protocol.c)(0x67CF91CE)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/bq769x2_protocol.o -MMD)
+F (..\Code\Comm\Source\BQ769x2_protocol.c)(0x67CF91CE)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/bq769x2_protocol.o -MMD)
 I (..\Code\Comm\Header\BQ769x2_protocol.h)(0x67887701)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
@@ -320,13 +322,13 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\Code\BMS\Header\BatConfig.h)(0x67DA3B39)
 I (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
 F (..\Code\Comm\Header\BQ769x2_protocol.h)(0x67887701)()
-F (..\Code\Comm\Source\UART_comm.c)(0x67497462)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/uart_comm.o -MMD)
+F (..\Code\Comm\Source\UART_comm.c)(0x67497462)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/uart_comm.o -MMD)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
@@ -403,9 +405,9 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 F (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)()
-F (..\Code\Comm\Source\PC_protocol.c)(0x678759C9)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/pc_protocol.o -MMD)
+F (..\Code\Comm\Source\PC_protocol.c)(0x678759C9)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/pc_protocol.o -MMD)
 I (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
@@ -482,11 +484,11 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 F (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)()
-F (.\MT9818_protocol.c)(0x680B3CD0)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/mt9818_protocol.o -MMD)
-I (MT9818_protocol.h)(0x680AFF9C)
+F (.\MT9818_protocol.c)(0x680B3CD0)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/mt9818_protocol.o -MMD)
+I (MT9818_protocol.h)(0x681D70A1)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
@@ -563,9 +565,10 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
-F (.\MT9818_protocol.h)(0x680AFF9C)()
-F (..\Code\BSW\Source\myMCUCommBSW.c)(0x674A9CB6)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/mymcucommbsw.o -MMD)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
+F (.\MT9818_protocol.h)(0x681D70A1)()
+F (.\SPI_comm.c)(0x6824634A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/spi_comm.o -MMD)
+I (SPI_comm.h)(0x6824448C)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
 I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
 I (..\..\test1\ti\devices\DeviceFamily.h)(0x66D136B8)
@@ -641,9 +644,169 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
+I (ti_msp_dl_config.h)(0x6824441F)
+F (.\SPI_comm.h)(0x6824448C)()
+F (.\MT9805_protocol.c)(0x682D714C)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/mt9805_protocol.o -MMD)
+I (MT9805_protocol.h)(0x682C2059)
+I (SPI_comm.h)(0x6824448C)
+I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
+I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
+I (..\..\test1\ti\devices\DeviceFamily.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\m0p\mspm0g350x.h)(0x66D136B8)
+I (..\Core\Include\core_cm0plus.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_adc12.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_aes.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_comp.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_crc.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_dac12.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_dma.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_flashctl.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_gpio.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_gptimer.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_i2c.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_iomux.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_mathacl.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_mcan.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_oa.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_rtc.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_spi.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_trng.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_uart.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_vref.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_wuc.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_wwdt.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_factoryregion.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_cpuss.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_debugss.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_sysctl.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\sysctl\hw_sysctl_mspm0g1x0x_g3x0x.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\driverlib.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_adc12.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_common.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_factoryregion.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_core.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_aes.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_aesadv.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_comp.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_crc.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_crcp.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_dac12.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_dma.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_flashctl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_sysctl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\sysctl\dl_sysctl_mspm0g1x0x_g3x0x.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_gpamp.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_gpio.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_i2c.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_iwdt.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_lfss.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_keystorectl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_lcd.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_mathacl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_mcan.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_opa.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc_common.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc_a.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc_b.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_scratchpad.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_spi.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_tamperio.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_timera.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_timer.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_timerg.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_trng.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_uart_extend.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_uart.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_uart_main.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_vref.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
+I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
+I (ti_msp_dl_config.h)(0x6824441F)
+F (.\MT9805_protocol.h)(0x682C2059)()
+F (..\Code\BSW\Source\myMCUCommBSW.c)(0x674A9CB6)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/mymcucommbsw.o -MMD)
+I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
+I (..\..\test1\ti\devices\msp\msp.h)(0x66D136B8)
+I (..\..\test1\ti\devices\DeviceFamily.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\m0p\mspm0g350x.h)(0x66D136B8)
+I (..\Core\Include\core_cm0plus.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_adc12.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_aes.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_comp.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_crc.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_dac12.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_dma.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_flashctl.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_gpio.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_gptimer.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_i2c.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_iomux.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_mathacl.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_mcan.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_oa.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_rtc.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_spi.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_trng.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_uart.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_vref.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_wuc.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\hw_wwdt.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_factoryregion.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_cpuss.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_debugss.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\hw_sysctl.h)(0x66D136B8)
+I (..\..\test1\ti\devices\msp\peripherals\m0p\sysctl\hw_sysctl_mspm0g1x0x_g3x0x.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\driverlib.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_adc12.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_common.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_factoryregion.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_core.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_aes.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_aesadv.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_comp.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_crc.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_crcp.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_dac12.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_dma.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_flashctl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_sysctl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\sysctl\dl_sysctl_mspm0g1x0x_g3x0x.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_gpamp.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_gpio.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_i2c.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_iwdt.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_lfss.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_keystorectl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_lcd.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_mathacl.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_mcan.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_opa.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc_common.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc_a.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_rtc_b.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_scratchpad.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_spi.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_tamperio.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_timera.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_timer.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_timerg.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_trng.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_uart_extend.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_uart.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_uart_main.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_vref.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
+I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
+I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 F (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)()
-F (..\Code\App\Source\DataProcess.c)(0x67DA36BD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/dataprocess.o -MMD)
+F (..\Code\App\Source\DataProcess.c)(0x67DA36BD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/dataprocess.o -MMD)
 I (..\Code\App\Header\DataProcess.h)(0x67872E60)
 I (..\Code\Comm\Header\BQ769x2_protocol.h)(0x67887701)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
@@ -721,14 +884,14 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\Code\BMS\Header\BatConfig.h)(0x67DA3B39)
 I (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
 I (..\Code\BMS\Header\B5_SOC.h)(0x67D938E2)
 F (..\Code\App\Header\DataProcess.h)(0x67872E60)()
-F (..\Code\App\Source\FaultProtect.c)(0x678771F6)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/faultprotect.o -MMD)
+F (..\Code\App\Source\FaultProtect.c)(0x678771F6)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/faultprotect.o -MMD)
 I (..\Code\App\Header\FaultProtect.h)(0x674D1D94)
 I (..\Code\Comm\Header\BQ769x2_protocol.h)(0x67887701)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
@@ -806,13 +969,13 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\Code\BMS\Header\BatConfig.h)(0x67DA3B39)
 I (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
 F (..\Code\App\Header\FaultProtect.h)(0x674D1D94)()
-F (..\Code\BMS\Source\B5_SOC.c)(0x67DB84CF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/b5_soc.o -MMD)
+F (..\Code\BMS\Source\B5_SOC.c)(0x67DB84CF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/b5_soc.o -MMD)
 I (..\Code\BMS\Header\B5_SOC.h)(0x67D938E2)
 I (..\Code\BMS\Header\BatConfig.h)(0x67DA3B39)
 I (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)
@@ -891,11 +1054,11 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\Comm\Header\BQ769X2_protocol.h)(0x67887701)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
-F (..\Code\BMS\Source\BatConfig.c)(0x680874DF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O2 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/batconfig.o -MMD)
+F (..\Code\BMS\Source\BatConfig.c)(0x680874DF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m0plus -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -Wno-covered-switch-default -Wno-unreachable-code-break -I ../../test1 -I ../Core/Include -I ../keil -I ../Code/BSW/Header -I ../Code/Comm/Header -I ../Code/App/Header -I ../Code/BMS/Header-D__UVISION_VERSION="541" -D__MSPM0G3507__ -D__MSPM0G3507__-o ../objects/batconfig.o -MMD)
 I (..\Code\BMS\Header\BatConfig.h)(0x67DA3B39)
 I (..\Code\Comm\Header\PC_protocol.h)(0x67B3EB35)
 I (..\Code\BSW\Header\myMCUCommBSW.h)(0x674A9F0E)
@@ -973,7 +1136,7 @@ I (..\..\test1\ti\driverlib\dl_wwdt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_interrupt.h)(0x66D136B8)
 I (..\..\test1\ti\driverlib\m0p\dl_systick.h)(0x66D136B8)
 I (..\..\test1\ti\iqmath\include\IQmathLib.h)(0x66D136B8)
-I (..\keil\ti_msp_dl_config.h)(0x6757D9D9)
+I (..\keil\ti_msp_dl_config.h)(0x6824441F)
 I (..\Code\Comm\Header\UART_comm.h)(0x67497CC0)
 I (..\Code\Comm\Header\BQ769x2_protocol.h)(0x67887701)
 I (..\Code\Comm\Header\I2C_comm.h)(0x680AF9F2)
