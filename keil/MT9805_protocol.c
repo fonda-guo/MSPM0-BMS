@@ -1451,3 +1451,39 @@ static uint8_t VoltToTemp(uint8_t *pTemp,uint16_t adcVal,const uint16_t *pTable,
     }
     return 0;
 }
+
+
+
+/****************************************/
+/* cell balance*/
+/****************************************/
+void cellBalanceTaskTest(void){
+	// over Temp or else condition terminate the cell balance to be done
+  if(!cellBalanceTaskCondition()) return;
+  uint16_t minvol = 0xffff;
+	uint16_t deltvol = 300;
+	uint32_t cellbalancebits = 0;
+	//find min voltage
+	for(uint8_t i = 0; i < 18; i++){
+	  if(minvol > MT9805DataBase[0].VoltageData[i])
+		{
+		    minvol = MT9805DataBase[0].VoltageData[i];
+		}
+	}
+	//assert the bit
+  for(uint8_t i = 0; i < 18; i++){
+	  if(MT9805DataBase[0].VoltageData[i] > minvol + deltvol)
+		{
+		    cellbalancebits |= (1<<i);
+		}
+	}	
+	MT9805DataBase[0].ConfigureData_A->DCC1_8   = (cellbalancebits & 0xff);
+	MT9805DataBase[0].ConfigureData_A->DCC9_12  = ((cellbalancebits & 0xf00)  >> 8);
+  MT9805DataBase[0].ConfigureData_B->DCC13_16 = ((cellbalancebits & 0xf000) >> 12);
+	MT9805DataBase[0].ConfigureData_B->DCC17_18 = ((cellbalancebits & 0x30000) >> 16);
+	Write9805_CFGRA(isoChipSize);
+	Write9805_CFGRB(isoChipSize);
+}
+bool cellBalanceTaskCondition(void){
+  return true;
+}

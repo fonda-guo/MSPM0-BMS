@@ -174,5 +174,6 @@ void MT9805_Init(void);
 void Get_Volt(void);
 void Get_Temp(void);
 void testfunc(void);
-
+bool cellBalanceTaskCondition(void);
+void cellBalanceTaskTest(void);
 #endif

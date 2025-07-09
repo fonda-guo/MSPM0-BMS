@@ -464,12 +464,13 @@ extern uint8_t value_SafetyStatusB;
 extern uint8_t FET_Status;
 extern int16_t Pack_Current;
 extern uint16_t CellVoltage[8];
-extern float Temperature[4];
+extern float Temperature[7];
 
 void BQ769x2_Init(BatPackBasicInfo* packInfo);
 void BQ769x2_ReadAlarmStatus();
 void BQ769x2_ReadSafetyStatus();
 void BQ769x2_ReadPFStatus();
+uint16_t BQ76952_ReadBatteryStatus();
 uint16_t BQ769x2_ReadVoltage(uint8_t command);
 void BQ769x2_ReadAllVoltages();
 void BQ769x2_ReadCurrent();

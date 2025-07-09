@@ -25,6 +25,9 @@ typedef enum{
 	ts2,                //temperature
 	ts3,
 	ts4,
+	ts5,
+	ts6,
+	ts7,
 	current,
 	test_cnter,
 	debug_register1,

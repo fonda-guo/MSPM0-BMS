@@ -126,6 +126,10 @@
 #define VOL_IMBALANCE                0x0010
 #define SOC_IMBALANCE                0x0020
 
+//AFE status
+#define NORMAL_MODE                  0x00
+#define SLEEP_MODE_ENABLE            0x02
+
 //---------------------------------------------------------------------------
 // Typedefs, structs and enums
 //---------------------------------------------------------------------------
@@ -141,6 +145,8 @@ typedef struct{
 
     uint32_t SingleBatCoulombTotal;
     uint32_t DataCheck;
+	   
+	  uint8_t  AFEStatus;
 }BOXINFO;
 
 typedef struct{

@@ -5,4 +5,5 @@
 #include "B5_SOC.h"
 
 void BQDataGet();
+void AFEBasicTask(void);
 #endif

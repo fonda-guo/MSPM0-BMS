@@ -5,7 +5,7 @@
 //******************************************************************************
 // Global Variables for cell voltages, temperatures, Stack voltage, PACK Pin voltage, LD Pin voltage, CC2 current
 uint16_t CellVoltage[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-float Temperature[4]     = {0, 0, 0, 0};
+float Temperature[7]     = {0, 0, 0, 0, 0, 0, 0};
 uint16_t Stack_Voltage   = 0x00;
 uint16_t Pack_Voltage    = 0x00;
 uint16_t LD_Voltage      = 0x00;
@@ -300,6 +300,12 @@ void BQ769x2_ReadAlarmStatus()
     AlarmBits = (uint16_t) RX_data[1] * 256 + (uint16_t) RX_data[0];
 }
 
+uint16_t BQ76952_ReadBatteryStatus()
+{
+	  DirectCommands(BatteryStatus, 0x00, R);
+	  return (uint16_t) RX_data[1] * 256 + (uint16_t) RX_data[0];
+}
+
 void BQ769x2_ReadSafetyStatus()
 {
     // Read Safety Status A/B/C and find which bits are set
@@ -392,10 +398,13 @@ float BQ769x2_ReadTemperature(uint8_t command)
 
 void BQ769x2_ReadAllTemperatures()
 {
-    Temperature[0] = BQ769x2_ReadTemperature(CFETOFFTemperature);
-    Temperature[1] = BQ769x2_ReadTemperature(TS1Temperature);
-    Temperature[2] = BQ769x2_ReadTemperature(TS3Temperature);
-	  Temperature[3] = BQ769x2_ReadTemperature(HDQTemperature);
+    Temperature[0] = BQ769x2_ReadTemperature(DDSGTemperature);
+    Temperature[1] = BQ769x2_ReadTemperature(DCHGTemperature);
+    Temperature[2] = BQ769x2_ReadTemperature(DFETOFFTemperature);
+	  Temperature[3] = BQ769x2_ReadTemperature(ALERTTemperature);
+	  Temperature[4] = BQ769x2_ReadTemperature(TS3Temperature);
+	  Temperature[5] = BQ769x2_ReadTemperature(TS1Temperature);
+    Temperature[6] = BQ769x2_ReadTemperature(CFETOFFTemperature);	
 }
 
 void BQ769x2_ReadPassQ()

@@ -1,7 +1,7 @@
 #ifndef BAT_CONFIG_H_
 #define BAT_CONFIG_H_
 
-//This file is made for RPLJ battery
+//This file is made for WL battery
 
 //This file is to contain some basic bat configuration
 //To simplify and standardlize some process

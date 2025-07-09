@@ -44,6 +44,8 @@ void BQDataGet(){
 	  //clear buffer
 	  DL_I2C_flushControllerRXFIFO(I2C_0_INST);
 	  
+	  AFEBasicTask();
+	
 	  PcPointBuffer[cell7Vol] = BQ769x2_ReadVoltage(Cell15Voltage);
 		PcPointBuffer[maxcellvol] = PcPointBuffer[cell7Vol];
 		PcPointBuffer[mincellvol] = PcPointBuffer[cell7Vol];
@@ -59,7 +61,7 @@ void BQDataGet(){
 		PcPointBuffer[stackVol] = BQ769x2_ReadVoltage(StackVoltage);
 	  PcPointBuffer[LDpinVol] = BQ769x2_ReadVoltage(LDPinVoltage);
 		BQ769x2_ReadAllTemperatures();
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < THERMISTOR_NUM; i++){
 		    PcPointBuffer[ts1 + i] = (int16_t)(Temperature[i] * 10);//float occupies 4 bytes
 		}
 		//current
@@ -69,3 +71,17 @@ void BQDataGet(){
 }
 
 
+void AFEBasicTask(){
+	uint16_t statusBit = BQ76952_ReadBatteryStatus();
+	if(statusBit & 0x8000){
+	  //in sleep mode
+		if(~(boxInfo.AFEStatus & SLEEP_MODE_ENABLE)){
+	    CommandSubcommands(SLEEP_DISABLE);
+	  }		
+	}else{
+		//out of sleep mode
+	  if(boxInfo.AFEStatus & SLEEP_MODE_ENABLE){ 
+		  CommandSubcommands(SLEEP_ENABLE);
+		}
+	}	
+}

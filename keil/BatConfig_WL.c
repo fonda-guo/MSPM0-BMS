@@ -1,14 +1,16 @@
 #include "BatConfig.h"
 #include "BQ769x2_protocol.h"
-//This file is made for RPLJ battery 
-//no cur
-const uint16_t NoCur_chg_VolTable[14]    = {2800, 3181, 3224, 3247, 3277, 3294, 3303, 3304, 3306, 3308, 3311, 3320, 3340, 3406};
-const uint8_t  NoCur_chg_SOCRange[14]    = {0, 5, 10, 15, 20, 25, 30, 40, 45, 50, 55, 60, 80, 100};
-const uint8_t  NoCur_chg_SOCErrRange[14] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 20, 20, 20};
 
-const uint16_t NoCur_dchg_VolTable[14]    = {2800, 3205, 3248, 3282, 3291, 3293, 3305, 3330, 3331, 3339, 3390};
-const uint8_t  NoCur_dchg_SOCRange[14]    = {0, 10, 20, 30, 40, 50, 60, 70, 80, 95, 100};
-const uint8_t  NoCur_dchg_SOCErrRange[14] = {10, 10, 10, 10, 10, 10, 10, 10, 15, 15, 10};
+//This file is made for WL battery!
+
+//no cur
+const uint16_t NoCur_chg_VolTable[8]    = {2800, 3222, 3279, 3303, 3308, 3334, 3340, 3400};
+const uint8_t  NoCur_chg_SOCRange[8]    = {0, 10, 20, 30, 50, 60, 90, 100};
+const uint8_t  NoCur_chg_SOCErrRange[8] = {10, 10, 10, 20, 20, 20, 20, 10};
+
+const uint16_t NoCur_dchg_VolTable[8]    = {2800, 3180, 3228, 3270, 3289, 3295, 3330, 3400};
+const uint8_t  NoCur_dchg_SOCRange[8]    = {0, 10, 20, 30, 40, 60, 90, 100};
+const uint8_t  NoCur_dchg_SOCErrRange[8] = {10, 10, 10, 10, 20, 20, 20, 10};
 //---------------------------------------------------------------------------
 //SOC Calibration Data	
 //---------------------------------------------------------------------------	
@@ -16,8 +18,8 @@ const uint16_t Cali_T_tbl[CALI_T_NUM] = {0, 150, 250, 350, 450};  // temperature
 
 //SOC*100
 //soc tbl
-const uint16_t Cali_chg_SOC_tbl[CALI_POINT_NUM]  = {500, 2000, 6200, 9700};
-const uint16_t Cali_dchg_SOC_tbl[CALI_POINT_NUM] = {500, 2000, 6400, 9900};
+const uint16_t Cali_chg_SOC_tbl[CALI_POINT_NUM]  = {500, 2000, 6000, 9700};
+const uint16_t Cali_dchg_SOC_tbl[CALI_POINT_NUM] = {500, 2000, 6500, 9900};
 //soc error tbl
 const uint16_t Cali_delt_chg_SOC_region[CALI_POINT_NUM]  = {100, 300, 700, 150};
 const uint16_t Cali_delt_dchg_SOC_region[CALI_POINT_NUM] = {100, 300, 700, 100};
@@ -33,24 +35,24 @@ const uint16_t Cali_K_chg_Higher_SOC[CALI_POINT_NUM]  = {8, 3, 2, 1};
 const uint16_t Cali_K_chg_Lower_SOC[CALI_POINT_NUM]   = {15, 30, 50, 200};
 
 //Temperature 0 Celsius
-const uint16_t Cali_T0_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3390, 3438, 3463, 3580}, {3319, 3388, 3428, 3580}, {3271, 3345, 3389, 3472},  //chg  0.5C  0.3C  0.1C
-                                                               {3070, 3180, 3248, 3304}, {2942, 3119, 3199, 3253}, {2926, 3085, 3162, 3207}}; //dchg 0.1C  0.3C  0.5C
+const uint16_t Cali_T0_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3390, 3439, 3447, 3541}, {3351, 3402, 3425, 3531}, {3287, 3353, 3389, 3495},  //chg  0.5C  0.3C  0.1C
+                                                               {2996, 3163, 3240, 3274}, {2887, 3098, 3188, 3211}, {2881, 3074, 3158, 3166}}; //dchg 0.1C  0.3C  0.5C
 
 //Temperature 15 Celsius
-const uint16_t Cali_T15_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3287, 3371, 3412, 3494}, {3282, 3347, 3392, 3467}, {3246, 3313, 3361, 3419},  //chg  0.5C  0.3C  0.1C
-                                                                {3107, 3206, 3276, 3307}, {3048, 3166, 3239, 3265}, {3019, 3141, 3213, 3236}}; //dchg 0.1C  0.3C  0.5C
+const uint16_t Cali_T15_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3297, 3379, 3433, 3554}, {3273, 3344, 3401, 3463}, {3235, 3310, 3368, 3407},  //chg  0.5C  0.3C  0.1C
+                                                                {3125, 3208, 3274, 3329}, {3077, 3167, 3236, 3294}, {3041, 3133, 3203, 3257}}; //dchg 0.1C  0.3C  0.5C
 
 //Temperature 25 Celsius
-const uint16_t Cali_T25_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3262, 3352, 3400, 3467}, {3258, 3331, 3381, 3440}, {3225, 3304, 3355, 3399},  //chg  0.5C  0.3C  0.1C
-                                                                {3124, 3217, 3288, 3330}, {3085, 3187, 3255, 3287}, {3058, 3163, 3232, 3260}}; //dchg 0.1C  0.3C  0.5C
+const uint16_t Cali_T25_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3275, 3355, 3412, 3477}, {3244, 3326, 3386, 3429}, {3215, 3299, 3358, 3390},  //chg  0.5C  0.3C  0.1C
+                                                                {3135, 3217, 3287, 3339}, {3108, 3189, 3257, 3315}, {3079, 3162, 3231, 3289}}; //dchg 0.1C  0.3C  0.5C
 																															
 //Temperature 35 Celsius
-const uint16_t Cali_T35_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3229, 3334, 3389, 3444}, {3226, 3316, 3369, 3416}, {3201, 3294, 3347, 3382},  //chg  0.5C  0.3C  0.1C
-                                                                {3127, 3222, 3298, 3346}, {3107, 3200, 3271, 3313}, {3088, 3179, 3249, 3283}}; //dchg 0.1C  0.3C  0.5C																															 
+const uint16_t Cali_T35_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3254, 3343, 3406, 3450}, {3234, 3319, 3381, 3417}, {3207, 3295, 3354, 3382},  //chg  0.5C  0.3C  0.1C
+                                                                {3135, 3219, 3292, 3345}, {3114, 3195, 3263, 3323}, {3089, 3169, 3238, 3300}}; //dchg 0.1C  0.3C  0.5C																															 
 																															 
 //Temperature 45 Celsius
-const uint16_t Cali_T45_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3217, 3325, 3383, 3425}, {3215, 3308, 3364, 3401}, {3193, 3290, 3344, 3374},  //chg  0.5C  0.3C  0.1C
-                                                                {3129, 3224, 3303, 3356}, {3114, 3205, 3279, 3328}, {3098, 3187, 3259, 3305}}; //dchg 0.1C  0.3C  0.5C
+const uint16_t Cali_T45_vol_tbl[CALI_CUR_NUM][CALI_POINT_NUM] ={{3251, 3341, 3405, 3443}, {3228, 3316, 3377, 3409}, {3202, 3292, 3352, 3377},  //chg  0.5C  0.3C  0.1C
+                                                                {3134, 3219, 3296, 3348}, {3114, 3196, 3267, 3327}, {3089, 3168, 3239, 3302}}; //dchg 0.1C  0.3C  0.5C
 
 //Put all of the temperature voltage data into one table																																
 const uint16_t (*Cali_T_Vol_tbl[CALI_T_NUM])[CALI_POINT_NUM]	 = {Cali_T0_vol_tbl, Cali_T15_vol_tbl, Cali_T25_vol_tbl, Cali_T35_vol_tbl, Cali_T45_vol_tbl};																															

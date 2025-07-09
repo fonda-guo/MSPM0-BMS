@@ -54,10 +54,7 @@ int main(void)
 			DL_GPIO_togglePins(GPIO_LED_PORT,GPIO_LED_USER_LED_2B_PIN);
 			
 			//test
-			//BQDataGet();
-			Get_Volt();
-			Get_Temp();
-			//testfunc();
+			BQDataGet();
 			//Check if battery voltage reaches the threshold
       BMSSingleBatVolCheck();
 			
